@@ -1,0 +1,105 @@
+# Styled Form Example - v2.43.0+
+# Demonstrates InputField styling: colors and fonts
+
+languages: [ru, uk, en]
+
+processor:
+  name: СтилизованнаяФорма
+  synonym: "Стилизованная форма | Стилізована форма | Styled Form"
+
+attributes:
+  - name: Заголовок
+    type: string
+    length: 200
+    synonym: "Заголовок | Заголовок | Title"
+  - name: Описание
+    type: string
+    synonym: "Описание | Опис | Description"
+  - name: ВажноеПоле
+    type: string
+    length: 100
+    synonym: "Важное поле | Важливе поле | Important Field"
+  - name: Результат
+    type: string
+    synonym: "Результат | Результат | Result"
+
+forms:
+  - name: Форма
+    default: true
+    properties:
+      title: "Демонстрация стилизации | Демонстрація стилізації | Styling Demo"
+    elements:
+      # Section header - LabelDecoration with bold font
+      - type: LabelDecoration
+        name: ЗаголовокСекции
+        title: "Стилизованные поля ввода | Стилізовані поля введення | Styled Input Fields"
+        font:
+          ref: "style:LargeTextFont"
+          bold: true
+
+      # Bold title with blue color
+      - type: InputField
+        name: ЗаголовокПоле
+        attribute: Заголовок
+        title_text_color: "#0066CC"
+        title_font:
+          ref: "style:LargeTextFont"
+          bold: true
+        width: 40
+
+      # Highlighted important field with yellow background
+      - type: InputField
+        name: ВажноеПолеПоле
+        attribute: ВажноеПоле
+        title_text_color: "#CC6600"
+        text_color: "#333333"
+        back_color: "#FFFDE7"
+        border_color: "#FF6600"
+        title_font:
+          ref: "style:NormalTextFont"
+          bold: true
+        font:
+          ref: "style:NormalTextFont"
+          faceName: "Arial"
+          height: 10
+        width: 30
+        tooltip: "Это важное поле выделено цветом | Це важливе поле виділено кольором | This important field is highlighted"
+
+      # Multiline description with custom styling
+      - type: InputField
+        name: ОписаниеПоле
+        attribute: Описание
+        multiline: true
+        height: 5
+        width: 40
+        title_text_color: "#006633"
+        back_color: "#F0FFF0"
+        font:
+          ref: "style:NormalTextFont"
+          italic: true
+
+      # Result field - read only with accent color
+      - type: InputField
+        name: РезультатПоле
+        attribute: Результат
+        read_only: true
+        title_text_color: "#990099"
+        text_color: "#660066"
+        back_color: "#F5E6F5"
+        border_color: "#990099"
+        title_font:
+          ref: "style:LargeTextFont"
+          bold: true
+          italic: true
+        width: 40
+
+      # Action button
+      - type: Button
+        name: ОбработатьКнопка
+        command: Обработать
+
+    commands:
+      - name: Обработать
+        title: "Обработать | Обробити | Process"
+        handler: ОбработатьОбработчик
+        picture: StdPicture.ExecuteTask

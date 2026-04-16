@@ -1,0 +1,84 @@
+languages: [ru, uk]
+
+processor:
+  name: ОтчетПоПродажам
+  explanation_ru: Формирует отчет по продажам за период с разбивкой по месяцам
+  explanation_uk: Формує звіт по продажах за період з розбивкою по місяцях
+  synonym: "Отчет по продажам | Звіт по продажах"
+
+attributes:
+  - name: ДатаНачала
+    type: date
+    title: "Дата начала | Дата початку"
+  - name: ДатаОкончания
+    type: date
+    title: "Дата окончания | Дата закінчення"
+  - name: Организация
+    type: CatalogRef.Организации
+    title: "Организация | Організація"
+
+forms:
+  - name: Форма
+    default: true
+    value_tables:
+      - name: Результаты
+        columns:
+          - name: Период
+            type: date
+            title: "Период | Період"
+          - name: МесяцСтрокой
+            type: string
+            length: 50
+            title: "Месяц | Місяць"
+          - name: Количество
+            type: number
+            digits: 15
+            fraction_digits: 3
+            title: "Количество | Кількість"
+          - name: Сумма
+            type: number
+            digits: 15
+            fraction_digits: 2
+            title: "Сумма | Сума"
+          - name: СуммаСоСкидкой
+            type: number
+            digits: 15
+            fraction_digits: 2
+            title: "Сумма со скидкой | Сума зі знижкою"
+    events:
+      OnOpen: ПриОткрытии
+    elements:
+      - type: UsualGroup
+        name: ФильтрыГруппа
+        title: Параметры отчета
+        show_title: true
+        group_direction: Vertical
+        representation: NormalSeparation
+        child_items:
+          - type: UsualGroup
+            name: ДатыГруппа
+            show_title: false
+            group_direction: Horizontal
+            child_items:
+              - type: InputField
+                name: ДатаНачалаПоле
+                attribute: ДатаНачала
+              - type: InputField
+                name: ДатаОкончанияПоле
+                attribute: ДатаОкончания
+          - type: InputField
+            name: ОрганизацияПоле
+            attribute: Организация
+          - type: Button
+            name: СформироватьКнопка
+            command: Сформировать
+      - type: Table
+        name: РезультатыТаблица
+        tabular_section: Результаты
+        is_value_table: true
+    commands:
+      - name: Сформировать
+        shortcut: F5
+        handler: Сформировать
+        title: "Сформировать | Сформувати"
+        tooltip: "Сформировать отчет по продажам за выбранный период | Сформувати звіт по продажах за вибраний період"

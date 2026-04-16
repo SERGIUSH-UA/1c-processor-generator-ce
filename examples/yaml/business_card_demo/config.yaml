@@ -1,0 +1,72 @@
+languages: [ru, uk]
+
+processor:
+  name: ГенераторВизиток
+  synonym: "Генератор визиток | Генератор візиток"
+
+attributes:
+  - name: ФИО
+    type: string
+    title: "ФИО | ПІБ"
+  - name: Должность
+    type: string
+    title: "Должность | Посада"
+  - name: Телефон
+    type: string
+    title: "Телефон | Телефон"
+  - name: Email
+    type: string
+    title: "Email | Email"
+  - name: Компания
+    type: string
+    title: "Компания | Компанія"
+
+templates:
+  - name: Card
+    type: HTMLDocument
+    file: templates/card.html
+    auto_field: true
+    field_name: CardPreview
+    automation: templates/card.automation.yaml
+
+forms:
+  - name: Форма
+    default: true
+    events:
+      OnCreateAtServer: ПриСозданииНаСервере
+    elements:
+      - type: UsualGroup
+        name: ГруппаВвода
+        group_type: UsualGroup
+        representation: WeakSeparation
+        title: "Данные визитки | Дані візитки"
+        child_items:
+          - type: InputField
+            name: ФИОПоле
+            attribute: ФИО
+            width: 40
+          - type: InputField
+            name: ДолжностьПоле
+            attribute: Должность
+            width: 40
+          - type: InputField
+            name: КомпанияПоле
+            attribute: Компания
+            width: 40
+          - type: InputField
+            name: ТелефонПоле
+            attribute: Телефон
+            width: 25
+          - type: InputField
+            name: EmailПоле
+            attribute: Email
+            width: 30
+      - type: Button
+        name: ОбновитьКнопка
+        command: Обновить
+        parent: ФормаКоманднаяПанель
+    commands:
+      - name: Обновить
+        handler: Обновить
+        picture: StdPicture.Refresh
+        title: "Обновить визитку | Оновити візитку"

@@ -1,0 +1,127 @@
+# Складний тестовий процесор
+
+processor:
+  name: СложныйПроцессор
+  synonym_ru: Сложный процессор
+  synonym_uk: Складний процесор
+  platform_version: "2.11"
+
+attributes:
+  - name: Заголовок
+    type: string
+    length: 200
+    synonym_ru: Заголовок
+    synonym_uk: Заголовок
+
+  - name: Дата
+    type: date
+    synonym_ru: Дата
+    synonym_uk: Дата
+
+  - name: Активен
+    type: boolean
+    synonym_ru: Активен
+    synonym_uk: Активний
+
+tabular_sections:
+  - name: Строки
+    synonym_ru: Строки
+    synonym_uk: Рядки
+    columns:
+      - name: Номенклатура
+        type: CatalogRef.Номенклатура
+        synonym_ru: Номенклатура
+        synonym_uk: Номенклатура
+
+      - name: Количество
+        type: number
+        digits: 15
+        fraction_digits: 3
+        synonym_ru: Количество
+        synonym_uk: Кількість
+
+      - name: Цена
+        type: number
+        digits: 15
+        fraction_digits: 2
+        synonym_ru: Цена
+        synonym_uk: Ціна
+
+forms:
+  - name: Форма
+    default: true
+    properties:
+      title: true
+      title_ru: Сложный процессор
+      title_uk: Складний процесор
+      auto_title: false
+
+    events:
+      OnOpen: ПриОткрытии
+      OnCreateAtServer: ПриСозданииНаСервере
+
+    value_tables:
+      - name: Результаты
+        title_ru: Результаты
+        title_uk: Результати
+        columns:
+          - name: Описание
+            type: string
+            length: 300
+            synonym_ru: Описание
+            synonym_uk: Опис
+
+          - name: Значение
+            type: number
+            digits: 10
+            fraction_digits: 2
+            synonym_ru: Значение
+            synonym_uk: Значення
+
+    elements:
+      - type: InputField
+        name: ЗаголовокПоле
+        attribute: Заголовок
+
+      - type: InputField
+        name: ДатаПоле
+        attribute: Дата
+
+      - type: CheckBoxField
+        name: АктивенПоле
+        attribute: Активен
+
+      - type: Table
+        name: СтрокиТаблица
+        tabular_section: Строки
+        events:
+          OnActivateRow: СтрокиТаблицаПриАктивизацииСтроки
+
+      - type: Table
+        name: РезультатыТаблица
+        tabular_section: Результаты
+
+      - type: Button
+        name: ЗагрузитьДанныеКнопка
+        command: ЗагрузитьДанные
+
+      - type: Button
+        name: РассчитатьКнопка
+        command: Рассчитать
+
+    commands:
+      - name: ЗагрузитьДанные
+        title_ru: Загрузить данные
+        title_uk: Завантажити дані
+        handler: ЗагрузитьДанные
+        tooltip_ru: Загрузить данные из базы
+        tooltip_uk: Завантажити дані з бази
+        shortcut: F7
+
+      - name: Рассчитать
+        title_ru: Рассчитать
+        title_uk: Розрахувати
+        handler: Рассчитать
+        tooltip_ru: Выполнить расчет
+        tooltip_uk: Виконати розрахунок
+        shortcut: F5

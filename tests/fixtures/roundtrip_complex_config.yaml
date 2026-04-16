@@ -1,0 +1,684 @@
+# Складна тестова обробка для roundtrip тестування
+# Подібна до StripeTax за складністю, але тільки прості типи даних
+
+processor:
+  name: ТестКомплекснийRoundtrip
+  synonym_ru: Тест комплексный Roundtrip
+  synonym_uk: Тест комплексний Roundtrip
+  platform_version: "2.11"
+
+# 18 атрибутів з простими типами
+attributes:
+  # Строкові
+  - name: Название
+    type: string
+    length: 150
+    synonym_ru: Название
+    synonym_uk: Назва
+
+  - name: Описание
+    type: string
+    length: 0  # unlimited
+    synonym_ru: Описание
+    synonym_uk: Опис
+
+  - name: КлючAPI
+    type: string
+    length: 100
+    synonym_ru: Ключ API
+    synonym_uk: Ключ API
+
+  - name: АдресСервера
+    type: string
+    length: 200
+    synonym_ru: Адрес сервера
+    synonym_uk: Адреса сервера
+
+  - name: Email
+    type: string
+    length: 100
+    synonym_ru: Email
+    synonym_uk: Email
+
+  - name: ЛогОпераций
+    type: string
+    length: 0
+    synonym_ru: Лог операций
+    synonym_uk: Лог операцій
+
+  # Числові
+  - name: Количество
+    type: number
+    digits: 10
+    fraction_digits: 0
+    synonym_ru: Количество
+    synonym_uk: Кількість
+
+  - name: Сумма
+    type: number
+    digits: 15
+    fraction_digits: 2
+    synonym_ru: Сумма
+    synonym_uk: Сума
+
+  - name: Процент
+    type: number
+    digits: 5
+    fraction_digits: 2
+    synonym_ru: Процент
+    synonym_uk: Відсоток
+
+  - name: Коэффициент
+    type: number
+    digits: 10
+    fraction_digits: 4
+    synonym_ru: Коэффициент
+    synonym_uk: Коефіцієнт
+
+  - name: Счетчик
+    type: number
+    digits: 10
+    fraction_digits: 0
+    synonym_ru: Счетчик
+    synonym_uk: Лічильник
+
+  # Булеві
+  - name: Активен
+    type: boolean
+    synonym_ru: Активен
+    synonym_uk: Активний
+
+  - name: ТестовыйРежим
+    type: boolean
+    synonym_ru: Тестовый режим
+    synonym_uk: Тестовий режим
+
+  - name: ОтображатьДетали
+    type: boolean
+    synonym_ru: Отображать детали
+    synonym_uk: Відображати деталі
+
+  - name: АвтоОбновление
+    type: boolean
+    synonym_ru: Автообновление
+    synonym_uk: Автооновлення
+
+  # Дати
+  - name: ДатаНачала
+    type: date
+    synonym_ru: Дата начала
+    synonym_uk: Дата початку
+
+  - name: ДатаОкончания
+    type: date
+    synonym_ru: Дата окончания
+    synonym_uk: Дата закінчення
+
+  - name: ПоследнееОбновление
+    type: date
+    synonym_ru: Последнее обновление
+    synonym_uk: Останнє оновлення
+
+# 4 ValueTable
+
+forms:
+  - name: Форма
+    default: true
+    properties:
+      Title_ru: Тест комплексный Roundtrip
+      Title_uk: Тест комплексний Roundtrip
+      AutoTitle: false
+
+    # Події форми
+    events:
+      OnOpen: ПриОткрытии
+      OnCreateAtServer: ПриСозданииНаСервере
+
+    # Складна структура форми з Pages та вкладеними групами
+    commands:
+    - name: ВыполнитьОбработку
+      title_ru: Выполнить
+      title_uk: Виконати
+      handler: ВыполнитьОбработку
+      picture: StdPicture.ExecuteTask
+    - name: ОчиститьРезультаты
+      title_ru: Очистить результаты
+      title_uk: Очистити результати
+      handler: ОчиститьРезультаты
+      picture: StdPicture.Delete
+    - name: ЗагрузитьНастройки
+      title_ru: Загрузить настройки
+      title_uk: Завантажити налаштування
+      handler: ЗагрузитьНастройки
+      picture: StdPicture.OpenFile
+    - name: СохранитьНастройки
+      title_ru: Сохранить настройки
+      title_uk: Зберегти налаштування
+      handler: СохранитьНастройки
+      picture: StdPicture.SaveFile
+    - name: ТестБыстрый
+      title_ru: Тест быстрый
+      title_uk: Тест швидкий
+      handler: ТестБыстрый
+      picture: StdPicture.CheckAll
+    - name: ТестПолный
+      title_ru: Тест полный
+      title_uk: Тест повний
+      handler: ТестПолный
+      picture: StdPicture.CheckAll
+    - name: ТестПроизводительности
+      title_ru: Тест производительности
+      title_uk: Тест продуктивності
+      handler: ТестПроизводительности
+      picture: StdPicture.ExecuteTask
+    - name: ПроверитьПодключение
+      title_ru: Проверить подключение
+      title_uk: Перевірити підключення
+      handler: ПроверитьПодключение
+      picture: StdPicture.Refresh
+    - name: ЭкспортДанных
+      title_ru: Экспорт данных
+      title_uk: Експорт даних
+      handler: ЭкспортДанных
+      picture: StdPicture.SaveFile
+    - name: ИмпортДанных
+      title_ru: Импорт данных
+      title_uk: Імпорт даних
+      handler: ИмпортДанных
+      picture: StdPicture.OpenFile
+    - name: ОбновитьСтатистику
+      title_ru: Обновить статистику
+      title_uk: Оновити статистику
+      handler: ОбновитьСтатистику
+      picture: StdPicture.Refresh
+    - name: ОчиститьИсторию
+      title_ru: Очистить историю
+      title_uk: Очистити історію
+      handler: ОчиститьИсторию
+      picture: StdPicture.Delete
+    - name: ОчиститьЛог
+      title_ru: Очистить лог
+      title_uk: Очистити лог
+      handler: ОчиститьЛог
+      picture: StdPicture.Delete
+    - name: Справка
+      title_ru: Справка
+      title_uk: Довідка
+      handler: Справка
+      picture: StdPicture.Information
+    value_tables:
+    - name: РезультатыОбработки
+      columns:
+        - name: Название
+          type: string
+          length: 200
+          synonym_ru: Название
+          synonym_uk: Назва
+
+        - name: Значение
+          type: string
+          length: 500
+          synonym_ru: Значение
+          synonym_uk: Значення
+
+        - name: Статус
+          type: string
+          length: 50
+          synonym_ru: Статус
+          synonym_uk: Статус
+
+        - name: Дата
+          type: date
+          synonym_ru: Дата
+          synonym_uk: Дата
+
+    - name: ИсторияОпераций
+      columns:
+        - name: Дата
+          type: date
+          synonym_ru: Дата
+          synonym_uk: Дата
+
+        - name: Операция
+          type: string
+          length: 150
+          synonym_ru: Операция
+          synonym_uk: Операція
+
+        - name: Сумма
+          type: number
+          digits: 15
+          fraction_digits: 2
+          synonym_ru: Сумма
+          synonym_uk: Сума
+
+        - name: Пользователь
+          type: string
+          length: 100
+          synonym_ru: Пользователь
+          synonym_uk: Користувач
+
+    - name: Настройки
+      columns:
+        - name: Параметр
+          type: string
+          length: 100
+          synonym_ru: Параметр
+          synonym_uk: Параметр
+
+        - name: Значение
+          type: string
+          length: 500
+          synonym_ru: Значение
+          synonym_uk: Значення
+
+        - name: Описание
+          type: string
+          length: 0
+          synonym_ru: Описание
+          synonym_uk: Опис
+
+    - name: СтатистикаДанные
+      columns:
+        - name: Показатель
+          type: string
+          length: 100
+          synonym_ru: Показатель
+          synonym_uk: Показник
+
+        - name: Значение
+          type: number
+          digits: 15
+          fraction_digits: 2
+          synonym_ru: Значение
+          synonym_uk: Значення
+
+        - name: Единица
+          type: string
+          length: 50
+          synonym_ru: Единица
+          synonym_uk: Одиниця
+
+  # Форма
+    elements:
+      - type: Pages
+        name: Страницы
+        pages_representation: TabsOnTop
+        pages:
+          # Сторінка 1: Основна
+          - name: СтраницаОсновная
+            title: Основная
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокОсновная
+                title: "🏠 Основная информация"
+                title_location: None
+                font:
+                  bold: true
+                  size: 12
+
+              - type: UsualGroup
+                name: ГруппаОсновныеДанные
+                title: Основные данные
+                group_direction: Vertical
+                show_title: true
+                child_items:
+                  - type: InputField
+                    name: НазваниеПоле
+                    attribute: Название
+
+                  - type: InputField
+                    name: ОписаниеПоле
+                    attribute: Описание
+                    multiline: true
+                    height: 3
+                    title_location: None
+
+                  - type: InputField
+                    name: EmailПоле
+                    attribute: Email
+
+              - type: UsualGroup
+                name: ГруппаДаты
+                title: Период
+                group_direction: Horizontal
+                show_title: true
+                child_items:
+                  - type: InputField
+                    name: ДатаНачалаПоле
+                    attribute: ДатаНачала
+
+                  - type: InputField
+                    name: ДатаОкончанияПоле
+                    attribute: ДатаОкончания
+
+              - type: UsualGroup
+                name: ГруппаФлаги
+                title: Настройки
+                group_direction: Vertical
+                show_title: true
+                child_items:
+                  - type: CheckBoxField
+                    name: АктивенФлаг
+                    attribute: Активен
+
+                  - type: CheckBoxField
+                    name: ТестовыйРежимФлаг
+                    attribute: ТестовыйРежим
+
+                  - type: CheckBoxField
+                    name: ОтображатьДеталиФлаг
+                    attribute: ОтображатьДетали
+
+                  - type: CheckBoxField
+                    name: АвтоОбновлениеФлаг
+                    attribute: АвтоОбновление
+
+          # Сторінка 2: Настройки
+          - name: СтраницаНастройки
+            title: Настройки
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокНастройки
+                title: "⚙️ Настройки подключения"
+                title_location: None
+                font:
+                  bold: true
+                  size: 12
+
+              - type: UsualGroup
+                name: ГруппаПодключение
+                title: Подключение
+                group_direction: Vertical
+                show_title: true
+                child_items:
+                  - type: InputField
+                    name: АдресСервераПоле
+                    attribute: АдресСервера
+                    input_hint_ru: "https://api.example.com"
+                    input_hint_uk: "https://api.example.com"
+
+                  - type: InputField
+                    name: КлючAPIПоле
+                    attribute: КлючAPI
+                    password_mode: true
+
+                  - type: UsualGroup
+                    name: ГруппаКнопкиПодключения
+                    group_direction: Horizontal
+                    show_title: false
+                    child_items:
+                      - type: Button
+                        name: КнопкаПроверитьПодключение
+                        command: ПроверитьПодключение
+
+                      - type: Button
+                        name: КнопкаЗагрузитьНастройки
+                        command: ЗагрузитьНастройки
+
+                      - type: Button
+                        name: КнопкаСохранитьНастройки
+                        command: СохранитьНастройки
+
+              - type: UsualGroup
+                name: ГруппаТаблицаНастройки
+                title: Параметры
+                group_direction: Vertical
+                show_title: true
+                child_items:
+                  - type: Table
+                    name: НастройкиТаблица
+                    tabular_section: Настройки
+                    is_value_table: true
+                    height: 10
+
+          # Сторінка 3: Тести
+          - name: СтраницаТесты
+            title: Тесты
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокТесты
+                title: "🧪 Интерактивное тестирование"
+                title_location: None
+                font:
+                  bold: true
+                  size: 12
+
+              - type: UsualGroup
+                name: ГруппаПараметрыТеста
+                title: Параметры теста
+                group_direction: Vertical
+                show_title: true
+                child_items:
+                  - type: InputField
+                    name: КоличествоПоле
+                    attribute: Количество
+
+                  - type: InputField
+                    name: СуммаПоле
+                    attribute: Сумма
+
+                  - type: InputField
+                    name: ПроцентПоле
+                    attribute: Процент
+
+                  - type: InputField
+                    name: КоэффициентПоле
+                    attribute: Коэффициент
+
+              - type: UsualGroup
+                name: ГруппаБыстрыеТесты
+                title: Быстрые тесты
+                group_direction: Vertical
+                show_title: true
+                child_items:
+                  - type: UsualGroup
+                    name: ГруппаКнопокБыстрыхТестов
+                    group_direction: Horizontal
+                    show_title: false
+                    child_items:
+                      - type: Button
+                        name: КнопкаТестБыстрый
+                        command: ТестБыстрый
+
+                      - type: Button
+                        name: КнопкаТестПолный
+                        command: ТестПолный
+
+                      - type: Button
+                        name: КнопкаТестПроизводительности
+                        command: ТестПроизводительности
+
+          # Сторінка 4: Результати
+          - name: СтраницаРезультаты
+            title: Результаты
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокРезультаты
+                title: "📊 Результаты обработки"
+                title_location: None
+                font:
+                  bold: true
+                  size: 12
+
+              - type: UsualGroup
+                name: ГруппаКнопкиРезультатов
+                group_direction: Horizontal
+                show_title: false
+                child_items:
+                  - type: Button
+                    name: КнопкаВыполнитьОбработку
+                    command: ВыполнитьОбработку
+
+                  - type: Button
+                    name: КнопкаОчиститьРезультаты
+                    command: ОчиститьРезультаты
+
+                  - type: Button
+                    name: КнопкаЭкспортДанных
+                    command: ЭкспортДанных
+
+              - type: UsualGroup
+                name: ГруппаТаблицаРезультатов
+                show_title: false
+                group_direction: Vertical
+                child_items:
+                  - type: Table
+                    name: РезультатыОбработкиТаблица
+                    tabular_section: РезультатыОбработки
+                    is_value_table: true
+                    height: 15
+
+          # Сторінка 5: Історія
+          - name: СтраницаИстория
+            title: История
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокИстория
+                title: "📜 История операций"
+                title_location: None
+                font:
+                  bold: true
+                  size: 12
+
+              - type: UsualGroup
+                name: ГруппаФильтрИстории
+                title: Фильтр
+                group_direction: Horizontal
+                show_title: true
+                child_items:
+                  - type: InputField
+                    name: СчетчикПоле
+                    attribute: Счетчик
+                    title_location: Top
+                    title_ru: Количество записей
+                    title_uk: Кількість записів
+
+                  - type: Button
+                    name: КнопкаОчиститьИсторию
+                    command: ОчиститьИсторию
+
+              - type: UsualGroup
+                name: ГруппаТаблицаИстории
+                show_title: false
+                group_direction: Vertical
+                child_items:
+                  - type: Table
+                    name: ИсторияОперацийТаблица
+                    tabular_section: ИсторияОпераций
+                    is_value_table: true
+                    height: 15
+
+          # Сторінка 6: Статистика
+          - name: СтраницаСтатистика
+            title: Статистика
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокСтатистика
+                title: "📈 Статистика и аналитика"
+                title_location: None
+                font:
+                  bold: true
+                  size: 12
+
+              - type: UsualGroup
+                name: ГруппаОбновлениеСтатистики
+                show_title: false
+                group_direction: Vertical
+                child_items:
+                  - type: Button
+                    name: КнопкаОбновитьСтатистику
+                    command: ОбновитьСтатистику
+
+                  - type: InputField
+                    name: ПоследнееОбновлениеПоле
+                    attribute: ПоследнееОбновление
+                    read_only: true
+
+              - type: UsualGroup
+                name: ГруппаТаблицаСтатистики
+                show_title: false
+                group_direction: Vertical
+                child_items:
+                  - type: Table
+                    name: СтатистикаДанныеТаблица
+                    tabular_section: СтатистикаДанные
+                    is_value_table: true
+                    height: 12
+
+          # Сторінка 7: Лог
+          - name: СтраницаЛог
+            title: Лог
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокЛог
+                title: "📝 Лог операций"
+                title_location: None
+                font:
+                  bold: true
+                  size: 12
+
+              - type: UsualGroup
+                name: ГруппаКнопкиЛога
+                group_direction: Horizontal
+                show_title: false
+                child_items:
+                  - type: Button
+                    name: КнопкаОчиститьЛог
+                    command: ОчиститьЛог
+
+              - type: UsualGroup
+                name: ГруппаПолеЛога
+                show_title: false
+                group_direction: Vertical
+                child_items:
+                  - type: InputField
+                    name: ЛогОперацийПоле
+                    attribute: ЛогОпераций
+                    multiline: true
+                    height: 20
+                    title_location: None
+
+          # Сторінка 8: Довідка
+          - name: СтраницаСправка
+            title: Справка
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокСправка
+                title: "❓ Справка и информация"
+                title_location: None
+                font:
+                  bold: true
+                  size: 12
+
+              - type: UsualGroup
+                name: ГруппаИнформация
+                title: О программе
+                group_direction: Vertical
+                show_title: true
+                child_items:
+                  - type: LabelDecoration
+                    name: ТекстСправки
+                    title: |
+                      Тестовая обработка для roundtrip тестирования генератора.
+
+                      Содержит:
+                      • 18 атрибутов (string, number, boolean, date)
+                      • 4 ValueTable с колонками
+                      • 8 страниц (Pages)
+                      • 14 команд с обработчиками
+                      • 150+ элементов формы
+
+                      Версия: 1.0.0
+
+              - type: UsualGroup
+                name: ГруппаКнопкаСправки
+                show_title: false
+                group_direction: Vertical
+                child_items:
+                  - type: Button
+                    name: КнопкаСправка
+                    command: Справка
+
+  # 14 команд
+

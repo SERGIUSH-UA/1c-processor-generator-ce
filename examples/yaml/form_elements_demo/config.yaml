@@ -1,0 +1,190 @@
+languages: [ru, uk]
+
+processor:
+  name: ДемоЭлементовФормы
+  platform_version: '2.11'
+  synonym: "Демо элементов формы | Демо елементів форми"
+
+attributes:
+  - name: ТипОперации
+    type: string
+    length: 20
+    synonym: "Тип операции | Тип операції"
+  - name: ВыполнитьПроверку
+    type: boolean
+    synonym: "Выполнить проверку | Виконати перевірку"
+  - name: ВыполнитьОбработку
+    type: boolean
+    synonym: "Выполнить обработку | Виконати обробку"
+  - name: РежимРаботы
+    type: string
+    length: 50
+    synonym: "Режим работы | Режим роботи"
+  - name: Статус
+    type: string
+    length: 100
+    synonym: "Статус | Статус"
+  - name: ПоискСтроки
+    type: string
+    length: 150
+    synonym: "Поиск | Пошук"
+
+forms:
+  - name: Форма
+    default: true
+    properties:
+      title: "Демонстрация новых элементов формы | Демонстрація нових елементів форми"
+      auto_title: false
+    events:
+      OnOpen: ПриОткрытии
+    elements:
+      - type: UsualGroup
+        name: ГруппаТипОперации
+        title: Выбор типа операции
+        show_title: true
+        group_direction: Vertical
+        representation: None
+        child_items:
+          - type: RadioButtonField
+            name: ТипОперацииПоле
+            attribute: ТипОперации
+            title_location: None
+            radio_button_type: Tumbler
+            choice_list:
+              - {v: Import, ru: "Импорт данных", uk: "Імпорт даних"}
+              - {v: Export, ru: "Экспорт данных", uk: "Експорт даних"}
+              - {v: Exchange, ru: "Обмен данными", uk: "Обмін даними"}
+            events:
+              OnChange: ТипОперацииПриИзменении
+      - type: UsualGroup
+        name: ГруппаНастройки
+        title: Настройки обработки
+        show_title: true
+        group_direction: Vertical
+        representation: None
+        child_items:
+          - type: CheckBoxField
+            name: ВыполнитьПроверкуПоле
+            attribute: ВыполнитьПроверку
+            title_location: Right
+            width: 30
+            events:
+              OnChange: ВыполнитьПроверкуПриИзменении
+          - type: CheckBoxField
+            name: ВыполнитьОбработкуПоле
+            attribute: ВыполнитьОбработку
+            title_location: Right
+            width: 30
+      - type: UsualGroup
+        name: ГруппаРежим
+        title: Режим работы
+        show_title: true
+        group_direction: Vertical
+        representation: None
+        child_items:
+          - type: InputField
+            name: РежимРаботыПоле
+            attribute: РежимРаботы
+            title_location: Top
+            width: 40
+            horizontal_stretch: false
+            choice_list:
+              - {v: Auto, ru: "Автоматический", uk: "Автоматичний"}
+              - {v: Manual, ru: "Ручной", uk: "Ручний"}
+              - {v: Step, ru: "Пошаговый", uk: "Покроковий"}
+            events:
+              OnChange: РежимРаботыПриИзменении
+      - type: UsualGroup
+        name: ГруппаПоиск
+        title: Поиск данных
+        show_title: true
+        group_direction: Vertical
+        representation: None
+        child_items:
+          - type: InputField
+            name: ПоискСтрокиПоле
+            attribute: ПоискСтроки
+            title_location: Top
+            width: 50
+            input_hint: "Введите текст для поиска... | Введіть текст для пошуку..."
+            events:
+              OnChange: ПоискСтрокиПриИзменении
+      - type: UsualGroup
+        name: ГруппаСтатус
+        title: Результаты
+        show_title: true
+        group_direction: Vertical
+        representation: None
+        child_items:
+          - type: LabelField
+            name: СтатусПоле
+            attribute: Статус
+      - type: UsualGroup
+        name: ГруппаКнопки
+        title: ''
+        show_title: false
+        group_direction: Horizontal
+        representation: None
+        child_items:
+          - type: Button
+            name: ВыполнитьКнопка
+            command: Выполнить
+            width: 20
+          - type: Button
+            name: ОчиститьКнопка
+            command: Очистить
+            width: 20
+    auto_command_bar:
+      - type: Popup
+        name: ДополнительноМеню
+        picture: StdPicture.Information
+        representation: PictureAndText
+        title: "Дополнительно | Додатково"
+        child_items:
+          - type: Button
+            name: ЭкспортКнопка
+            command: Экспорт
+          - type: Button
+            name: ИмпортКнопка
+            command: Импорт
+          - type: Popup
+            name: НастройкиПодменю
+            title: "Настройки | Налаштування"
+            child_items:
+              - type: Button
+                name: НастройкиОбщиеКнопка
+                command: НастройкиОбщие
+              - type: Button
+                name: НастройкиПользователяКнопка
+                command: НастройкиПользователя
+    commands:
+      - name: Выполнить
+        handler: ВыполнитьОбработку
+        picture: StdPicture.ExecuteTask
+        title: "Выполнить | Виконати"
+        tooltip: "Выполнить обработку с выбранными параметрами | Виконати обробку з обраними параметрами"
+      - name: Очистить
+        handler: ОчиститьФорму
+        picture: StdPicture.InputFieldClear
+        title: "Очистить | Очистити"
+        tooltip: "Очистить все поля формы | Очистити всі поля форми"
+      - name: Экспорт
+        handler: ЭкспортДанных
+        picture: StdPicture.SaveFile
+        title: "Экспорт | Експорт"
+        tooltip: "Экспорт данных | Експорт даних"
+      - name: Импорт
+        handler: ИмпортДанных
+        picture: StdPicture.OpenFile
+        title: "Импорт | Імпорт"
+        tooltip: "Импорт данных | Імпорт даних"
+      - name: НастройкиОбщие
+        handler: НастройкиОбщие
+        picture: StdPicture.CustomizeForm
+        title: "Общие настройки | Загальні налаштування"
+        tooltip: "Общие настройки системы | Загальні налаштування системи"
+      - name: НастройкиПользователя
+        handler: НастройкиПользователя
+        picture: StdPicture.User
+        title: "Настройки пользователя | Налаштування користувача"
+        tooltip: "Настройки текущего пользователя | Налаштування поточного користувача"

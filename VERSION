@@ -1,0 +1,17 @@
+# Version tracking for 1C Processor Generator
+# ============================================
+# DEV_VERSION: Current development version (in __init__.py)
+# RELEASE_VERSION: Last published release version (used by build_release.py)
+#
+# Workflow:
+# 1. During development, DEV_VERSION is updated in __init__.py
+# 2. When ready to release, update RELEASE_VERSION here
+# 3. Run build_release.py - it reads RELEASE_VERSION for dist/
+#
+# Commands:
+#   python scripts/update_version.py 2.59.0           # Update DEV version
+#   python scripts/update_version.py --release 2.57.0 # Update RELEASE version
+#   python scripts/update_version.py --promote        # Copy DEV -> RELEASE
+
+DEV_VERSION=2.77.0
+RELEASE_VERSION=2.77.0

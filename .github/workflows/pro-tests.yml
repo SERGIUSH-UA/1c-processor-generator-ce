@@ -1,0 +1,66 @@
+name: PRO Tests
+
+on:
+  pull_request:
+    branches: [ master, main, develop ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'examples/**'
+  workflow_dispatch:  # Тільки вручну або PR
+
+jobs:
+  build-release:
+    name: Build Release Package
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+
+    - name: Build release
+      run: |
+        pip install Cython>=3.0 setuptools wheel
+        pip install -r 1c_processor_generator/requirements.txt
+        python _build/build_multi_version.py --ci
+        python _build/build_release.py --use-prebuilt-pyds --skip-test
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: release-package
+        path: dist/1c_processor_generator_pro/
+        retention-days: 1
+
+  test-release:
+    name: Test Release - Py${{ matrix.python-version }}
+    runs-on: windows-latest
+    needs: build-release
+    strategy:
+      fail-fast: false
+      matrix:
+        # Тестуємо тільки ключові версії (3.10, 3.12, 3.14)
+        python-version: ['3.10', '3.12', '3.14']
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - uses: actions/download-artifact@v4
+      with:
+        name: release-package
+        path: dist/1c_processor_generator_pro/
+
+    - name: Test PRO module
+      shell: bash
+      env:
+        PYTHONIOENCODING: utf-8
+        TEST_LICENSE_KEY: ${{ secrets.TEST_LICENSE_KEY }}
+      run: |
+        pip install dist/1c_processor_generator_pro/ pytest
+        pytest tests/test_pro_*.py -v --tb=short -o addopts=""

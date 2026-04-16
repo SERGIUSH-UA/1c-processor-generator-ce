@@ -1,0 +1,91 @@
+languages: [ru, uk]
+
+processor:
+  name: ДемонстрацияФаза1
+  platform_version: '2.11'
+  synonym: "Демонстрация Фаза 1 | Демонстрація Фаза 1"
+
+attributes:
+  - name: Username
+    type: string
+    synonym: "Имя пользователя | Ім'я користувача"
+  - name: Password
+    type: string
+    synonym: "Пароль | Пароль"
+  - name: Description
+    type: string
+    synonym: "Описание | Опис"
+  - name: SelectedValue
+    type: string
+    synonym: "Выбранное значение | Вибране значення"
+
+tabular_sections:
+  - name: Items
+    synonym: "Товары | Товари"
+    columns:
+      - name: Product
+        type: string
+        synonym: "Товар | Товар"
+      - name: Quantity
+        type: number
+        digits: 15
+        fraction_digits: 3
+        synonym: "Количество | Кількість"
+
+forms:
+  - name: ГоловнаФорма
+    default: true
+    properties:
+      WindowOpeningMode: LockOwnerWindow
+      CommandBarLocation: Bottom
+    events:
+      OnOpen: ПриОткрытии
+      BeforeClose: ПередЗакрытием
+    elements:
+      - type: PictureDecoration
+        name: InfoIcon
+        picture: StdPicture.Information
+      - type: LabelDecoration
+        name: HelpLink
+        hyperlink: true
+        title: "Что это такое? (Нажмите для справки) | Що це таке? (Натисніть для довідки)"
+        events:
+          Click: HelpLinkClickНажатие
+      - type: InputField
+        name: DescriptionField
+        attribute: Description
+        multi_line: true
+        auto_max_width: true
+        title: "Описание | Опис"
+      - type: InputField
+        name: PasswordField
+        attribute: Password
+        password_mode: true
+        title: "Пароль | Пароль"
+      - type: InputField
+        name: UsernameField
+        attribute: Username
+        text_edit: false
+        title: "Имя пользователя | Ім'я користувача"
+      - type: InputField
+        name: SelectedValueField
+        attribute: SelectedValue
+        title: "Выбранное значение | Вибране значення"
+        events:
+          ChoiceProcessing: SelectedValueFieldОбработкаВыбора
+          StartChoice: SelectedValueFieldНачалоВыбора
+      - type: Table
+        name: ItemsTable
+        tabular_section: Items
+        events:
+          BeforeAddRow: ItemsTableПередДобавлениемСтроки
+          BeforeDeleteRow: ItemsTableПередУдалениемСтроки
+          BeforeRowChange: ItemsTableПередИзменениемСтроки
+      - type: Button
+        name: TestButton
+        command: TestCommand
+    commands:
+      - name: TestCommand
+        handler: TestCommandКнопка
+        picture: StdPicture.Report
+        title: "Тестировать | Тестувати"

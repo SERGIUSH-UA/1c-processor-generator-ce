@@ -1,0 +1,24 @@
+# Development dependencies
+# Install: pip install -r requirements-dev.txt
+
+# Include base requirements
+-r 1c_processor_generator/requirements.txt
+
+# Code formatting
+black>=24.3.0
+isort>=5.13.0
+
+# Linting
+flake8>=7.0.0
+
+# Git hooks
+pre-commit>=3.6.0
+
+# Testing on multiple Python versions
+tox>=4.0.0
+
+# Auto-reload tests during development
+pytest-watch>=4.2.0
+
+# Cython compilation (PRO module protection)
+Cython>=3.0

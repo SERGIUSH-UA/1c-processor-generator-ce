@@ -1,0 +1,45 @@
+languages: [ru, uk, en]
+
+processor:
+  name: ТестАнглийскогоЯзыка
+  synonym: "Тест английского языка | Тест англійської мови | English Language Test"
+  platform_version: "2.11"
+
+attributes:
+  - name: Товар
+    type: string
+    synonym: "Товар | Товар | Product"
+  - name: Количество
+    type: number
+    synonym: "Количество | Кількість | Quantity"
+  - name: Цена
+    type: number
+    synonym: "Цена | Ціна | Price"
+
+forms:
+  - name: Форма
+    default: true
+    commands:
+      - name: Розрахувати
+        title: "Рассчитать | Розрахувати | Calculate"
+        tooltip: "Рассчитать общую сумму | Розрахувати загальну суму | Calculate total amount"
+        handler: РозрахуватиВиконати
+    elements:
+      - type: InputField
+        name: ТоварПоле
+        attribute: Товар
+        title: "Товар | Товар | Product"
+        input_hint: "Введите название товара | Введіть назву товару | Enter product name"
+      - type: InputField
+        name: КоличествоПоле
+        attribute: Количество
+        title: "Количество | Кількість | Quantity"
+      - type: InputField
+        name: ЦенаПоле
+        attribute: Цена
+        title: "Цена | Ціна | Price"
+      - type: Button
+        name: Розрахувати
+        title: "Рассчитать | Розрахувати | Calculate"
+        command: Розрахувати
+        tooltip: "Рассчитать общую сумму | Розрахувати загальну суму | Calculate total amount"

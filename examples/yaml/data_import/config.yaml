@@ -1,0 +1,171 @@
+languages: [ru, uk]
+
+processor:
+  name: ИмпортДанных
+  explanation_ru: Мастер импорта данных из CSV файла в справочник
+  explanation_uk: Майстер імпорту даних з CSV файлу в довідник
+  synonym: "Импорт данных из файла | Імпорт даних з файлу"
+
+attributes:
+  - name: ПутьКФайлу
+    type: string
+    length: 500
+    title: "Путь к файлу | Шлях до файлу"
+  - name: Кодировка
+    type: string
+    length: 50
+    title: "Кодировка | Кодування"
+  - name: Справочник
+    type: string
+    length: 100
+    title: "Целевой справочник | Цільовий довідник"
+  - name: ОбновлятьСуществующие
+    type: boolean
+    title: "Обновлять существующие записи | Оновлювати існуючі записи"
+
+forms:
+  - name: Форма
+    default: true
+    value_tables:
+      - name: Предпросмотр
+        columns:
+          - name: НомерСтроки
+            type: number
+            digits: 10
+            fraction_digits: 0
+            title: "№ | №"
+          - name: Наименование
+            type: string
+            length: 200
+            title: "Наименование | Найменування"
+          - name: Код
+            type: string
+            length: 50
+            title: "Код | Код"
+          - name: Статус
+            type: string
+            length: 50
+            title: "Статус | Статус"
+      - name: РезультатыИмпорта
+        columns:
+          - name: Строка
+            type: number
+            digits: 10
+            fraction_digits: 0
+            title: "Строка | Рядок"
+          - name: Статус
+            type: string
+            length: 50
+            title: "Статус | Статус"
+          - name: Сообщение
+            type: string
+            length: 500
+            title: "Сообщение | Повідомлення"
+    events:
+      OnOpen: ПриОткрытии
+    elements:
+      - type: Pages
+        name: ШагиМастера
+        pages_representation: TabsOnTop
+        pages:
+          - name: Шаг1ВыборФайла
+            title: 'Шаг 1: Выбор файла'
+            child_items:
+              - type: LabelDecoration
+                name: Шаг1Инструкция
+                title: Выберите CSV файл для импорта
+              - type: InputField
+                name: ПутьКФайлуПоле
+                attribute: ПутьКФайлу
+                events:
+                  StartChoice: ПутьКФайлуНачалоВыбора
+              - type: InputField
+                name: КодировкаПоле
+                attribute: Кодировка
+              - type: UsualGroup
+                name: Шаг1КнопкиГруппа
+                show_title: false
+                group_direction: Horizontal
+                child_items:
+                  - type: Button
+                    name: ЗагрузитьПредпросмотрКнопка
+                    command: ЗагрузитьПредпросмотр
+          - name: Шаг2Предпросмотр
+            title: 'Шаг 2: Предпросмотр'
+            child_items:
+              - type: LabelDecoration
+                name: Шаг2Инструкция
+                title: Проверьте загруженные данные
+              - type: Table
+                name: ПредпросмотрТаблица
+                tabular_section: Предпросмотр
+                is_value_table: true
+              - type: UsualGroup
+                name: Шаг2КнопкиГруппа
+                show_title: false
+                group_direction: Horizontal
+                child_items:
+                  - type: Button
+                    name: НазадШаг1Кнопка
+                    command: НазадШаг1
+                  - type: Button
+                    name: ДалееШаг3Кнопка
+                    command: ДалееШаг3
+          - name: Шаг3Настройки
+            title: 'Шаг 3: Настройки импорта'
+            child_items:
+              - type: LabelDecoration
+                name: Шаг3Инструкция
+                title: Укажите параметры импорта
+              - type: InputField
+                name: СправочникПоле
+                attribute: Справочник
+              - type: InputField
+                name: ОбновлятьСуществующиеПоле
+                attribute: ОбновлятьСуществующие
+              - type: UsualGroup
+                name: Шаг3КнопкиГруппа
+                show_title: false
+                group_direction: Horizontal
+                child_items:
+                  - type: Button
+                    name: НазадШаг2Кнопка
+                    command: НазадШаг2
+                  - type: Button
+                    name: ВыполнитьИмпортКнопка
+                    command: ВыполнитьИмпорт
+          - name: Шаг4Результаты
+            title: 'Шаг 4: Результаты'
+            child_items:
+              - type: LabelDecoration
+                name: Шаг4Инструкция
+                title: Импорт завершен
+              - type: Table
+                name: РезультатыИмпортаТаблица
+                tabular_section: РезультатыИмпорта
+                is_value_table: true
+              - type: Button
+                name: ЗакрытьКнопка
+                command: Закрыть
+    commands:
+      - name: ЗагрузитьПредпросмотр
+        handler: ЗагрузитьПредпросмотр
+        title: "Загрузить предпросмотр | Завантажити попередній перегляд"
+        tooltip: "Загрузить первые строки файла для предпросмотра | Завантажити перші рядки файлу для попереднього перегляду"
+      - name: НазадШаг1
+        handler: НазадШаг1
+        title: "Назад | Назад"
+      - name: ДалееШаг3
+        handler: ДалееШаг3
+        title: "Далее | Далі"
+      - name: НазадШаг2
+        handler: НазадШаг2
+        title: "Назад | Назад"
+      - name: ВыполнитьИмпорт
+        shortcut: F5
+        handler: ВыполнитьИмпорт
+        title: "Выполнить импорт | Виконати імпорт"
+        tooltip: "Импортировать данные в информационную базу | Імпортувати дані в інформаційну базу"
+      - name: Закрыть
+        handler: ЗакрытьФорму
+        title: "Закрыть | Закрити"

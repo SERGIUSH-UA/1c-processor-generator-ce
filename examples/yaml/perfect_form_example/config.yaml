@@ -1,0 +1,223 @@
+languages: [ru, uk, en]
+
+processor:
+  name: ПрофессиональнаяФорма
+  platform_version: '2.11'
+  synonym: "Пример профессионального UI | Приклад професійного UI | Professional UI Example"
+
+attributes:
+  - name: НазваниеКомпании
+    type: string
+    synonym: "Название компании | Назва компанії | Company Name"
+  - name: ОписаниеДеятельности
+    type: string
+    synonym: "Описание деятельности | Опис діяльності | Business Description"
+  - name: Пароль
+    type: string
+    synonym: "Пароль | Пароль | Password"
+  - name: СуммаКонтракта
+    type: number
+    precision: 15
+    scale: 2
+    synonym: "Сумма контракта | Сума контракту | Contract Amount"
+  - name: Подтверждено
+    type: boolean
+    synonym: "Подтверждено | Підтверджено | Confirmed"
+
+forms:
+  - name: Форма
+    default: true
+    synonym: "Форма | Форма | Form"
+    properties:
+      command_bar_location: Bottom
+    elements:
+      - type: LabelDecoration
+        name: ЗаголовокОсновныеДанные
+        font:
+          bold: true
+          size: 12
+        title: "📊 Основная информация | 📊 Основна інформація | 📊 Basic Information"
+      - type: UsualGroup
+        name: ГруппаОсновныеДанные
+        show_title: true
+        representation: WeakSeparation
+        title: "Базовые данные | Базові дані | Basic Data"
+        elements:
+          - type: InputField
+            name: ПолеНазваниеКомпании
+            attribute: НазваниеКомпании
+            auto_max_width: true
+            input_hint: "Введите название компании | Введіть назву компанії | Enter company name"
+          - type: InputField
+            name: ПолеОписаниеДеятельности
+            attribute: ОписаниеДеятельности
+            multi_line: true
+            height: 5
+            title_location: Top
+            auto_max_width: true
+            input_hint: "Введите подробное описание деятельности компании | Введіть детальний опис діяльності компанії | Enter detailed business description"
+          - type: InputField
+            name: ПолеСуммаКонтракта
+            attribute: СуммаКонтракта
+            horizontal_align: Right
+            width: 20
+      - type: LabelDecoration
+        name: ЗаголовокБезопасность
+        font:
+          bold: true
+        title: "🔒 Безопасность | 🔒 Безпека | 🔒 Security"
+      - type: UsualGroup
+        name: ГруппаБезопасность
+        representation: WeakSeparation
+        elements:
+          - type: InputField
+            name: ПолеПароль
+            attribute: Пароль
+            password_mode: true
+            width: 30
+            input_hint: "Введите пароль | Введіть пароль | Enter password"
+          - type: LabelDecoration
+            name: СсылкаСправка
+            hyperlink: true
+            title: "Как создать надежный пароль? | Як створити надійний пароль? | How to create a strong password?"
+            events:
+              Click: СсылкаСправкаClick
+      - type: LabelDecoration
+        name: ПредупреждениеВажно
+        font:
+          bold: true
+          italic: true
+        title: "⚠️ Внимание! Изменения необратимы после подтверждения | ⚠️ Увага! Зміни незворотні після підтвердження | ⚠️ Warning! Changes are irreversible after confirmation"
+      - type: CheckBoxField
+        name: ПолеПодтверждено
+        attribute: Подтверждено
+        title_location: Right
+        title: "Подтверждаю правильность данных | Підтверджую правильність даних | I confirm data accuracy"
+      - type: Pages
+        name: ОсновныеСтраницы
+        pages_representation: TabsOnTop
+        pages:
+          - name: СтраницаРезультаты
+            title: "📊 Результаты | 📊 Результати | 📊 Results"
+            child_items:
+              - type: Table
+                name: ТаблицаРезультаты
+                tabular_section: Результаты
+                command_bar_location: Bottom
+                height: 15
+                horizontal_stretch: true
+                elements:
+                  - type: LabelField
+                    name: СтолбецОперация
+                    attribute: Операция
+                    width: 25
+                    title: "Операция | Операція | Operation"
+                  - type: ColumnGroup
+                    name: ГруппаКолонокДатаВремя
+                    group_layout: Horizontal
+                    horizontal_align: Center
+                    show_in_header: true
+                    title: "Дата и время | Дата та час | Date and Time"
+                    elements:
+                      - type: LabelField
+                        name: СтолбецДата
+                        attribute: Дата
+                        width: 12
+                        title: "Дата | Дата | Date"
+                      - type: LabelField
+                        name: СтолбецВремя
+                        attribute: Время
+                        width: 10
+                        title: "Время | Час | Time"
+                  - type: ColumnGroup
+                    name: ГруппаКолонокСуммы
+                    group_layout: Horizontal
+                    horizontal_align: Right
+                    show_in_header: true
+                    title: "Суммы | Суми | Amounts"
+                    elements:
+                      - type: LabelField
+                        name: СтолбецДебет
+                        attribute: Дебет
+                        width: 12
+                        horizontal_align: Right
+                        title: "Дебет | Дебет | Debit"
+                      - type: LabelField
+                        name: СтолбецКредит
+                        attribute: Кредит
+                        width: 12
+                        horizontal_align: Right
+                        title: "Кредит | Кредит | Credit"
+                      - type: LabelField
+                        name: СтолбецВсего
+                        attribute: Всего
+                        width: 12
+                        horizontal_align: Right
+                        font:
+                          bold: true
+                        title: "Всего | Всього | Total"
+          - name: СтраницаОтчет
+            title: "📄 Отчет | 📄 Звіт | 📄 Report"
+            child_items:
+              - type: SpreadSheetDocumentField
+                name: ПолеОтчет
+                attribute: Отчет
+                height: 20
+    form_attributes:
+      - name: Отчет
+        type: spreadsheet_document
+        synonym: "Отчет | Звіт | Report"
+    value_tables:
+      - name: Результаты
+        synonym: "Результаты | Результати | Results"
+        columns:
+          - name: Операция
+            type: string
+            synonym: "Операция | Операція | Operation"
+          - name: Дата
+            type: date
+            synonym: "Дата | Дата | Date"
+          - name: Время
+            type: string
+            length: 10
+            synonym: "Время | Час | Time"
+          - name: Дебет
+            type: number
+            precision: 15
+            scale: 2
+            synonym: "Дебет | Дебет | Debit"
+          - name: Кредит
+            type: number
+            precision: 15
+            scale: 2
+            synonym: "Кредит | Кредит | Credit"
+          - name: Всего
+            type: number
+            precision: 15
+            scale: 2
+            synonym: "Всего | Всього | Total"
+    commands:
+      - name: ВыполнитьОбработку
+        picture: StdPicture.ExecuteTask
+        handler: ВыполнитьОбработку
+        title: "Выполнить | Виконати | Execute"
+      - name: Сохранить
+        picture: StdPicture.Write
+        handler: Сохранить
+        title: "Сохранить | Зберегти | Save"
+      - name: Обновить
+        picture: StdPicture.Refresh
+        handler: Обновить
+        title: "Обновить | Оновити | Refresh"
+      - name: СформироватьОтчет
+        picture: StdPicture.GenerateReport
+        handler: СформироватьОтчет
+        title: "Сформировать отчет | Сформувати звіт | Generate Report"
+      - name: ЭкспортироватьДанные
+        picture: StdPicture.SaveFile
+        handler: ЭкспортироватьДанные
+        title: "Экспорт | Експорт | Export"
+      - name: Удалить
+        picture: StdPicture.Delete
+        handler: Удалить
+        title: "Удалить | Видалити | Delete"

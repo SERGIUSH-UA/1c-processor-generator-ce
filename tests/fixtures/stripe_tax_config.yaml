@@ -1,0 +1,665 @@
+processor:
+  name: ТестированиеStripeTax
+  synonym_ru: Тестирование Stripe Tax
+  synonym_uk: Тестування Stripe Tax
+  platform_version: "2.18"
+
+attributes:
+  # Организация
+  - name: Организация
+    type: CatalogRef.Организации
+    synonym_ru: Организация
+    synonym_uk: Організація
+
+  # Тестовые данные клиента
+  - name: ТестовыйКонтрагент
+    type: CatalogRef.Контрагенты
+    synonym_ru: Тестовый контрагент
+    synonym_uk: Тестовий контрагент
+
+  - name: АдресСтрока1
+    type: string
+    length: 200
+    synonym_ru: Адрес (строка 1)
+    synonym_uk: Адреса (рядок 1)
+
+  - name: Город
+    type: string
+    length: 100
+    synonym_ru: Город
+    synonym_uk: Місто
+
+  - name: Штат
+    type: string
+    length: 2
+    synonym_ru: Штат (код)
+    synonym_uk: Штат (код)
+
+  - name: ПочтовыйИндекс
+    type: string
+    length: 10
+    synonym_ru: ZIP код
+    synonym_uk: ZIP код
+
+  - name: TaxID
+    type: string
+    length: 20
+    synonym_ru: Tax ID (EIN)
+    synonym_uk: Tax ID (EIN)
+
+  - name: ТипКлиента
+    type: string
+    length: 10
+    synonym_ru: Тип клиента
+    synonym_uk: Тип клієнта
+
+  # Тестовые данные товара
+  - name: ТестоваяНоменклатура
+    type: CatalogRef.Номенклатура
+    synonym_ru: Тестовая номенклатура
+    synonym_uk: Тестова номенклатура
+
+  - name: Сумма
+    type: number
+    digits: 15
+    fraction_digits: 2
+    synonym_ru: Сумма (USD)
+    synonym_uk: Сума (USD)
+
+  - name: Количество
+    type: number
+    digits: 10
+    fraction_digits: 2
+    synonym_ru: Количество
+    synonym_uk: Кількість
+
+  - name: TaxCode
+    type: string
+    length: 20
+    synonym_ru: Tax Code
+    synonym_uk: Tax Code
+
+  # Результаты и статус
+  - name: СтатусПодключения
+    type: string
+    length: 500
+    synonym_ru: Статус подключения
+    synonym_uk: Статус підключення
+
+  - name: ЛогОпераций
+    type: string
+    length: 50000
+    synonym_ru: Лог операций
+    synonym_uk: Лог операцій
+
+  - name: ПоследнийТестНазвание
+    type: string
+    length: 200
+    synonym_ru: Название последнего теста
+    synonym_uk: Назва останнього тесту
+
+  - name: ПоследнийТестРезультат
+    type: string
+    length: 50
+    synonym_ru: Результат последнего теста
+    synonym_uk: Результат останнього тесту
+
+  # Настройки подключения
+  - name: КлючAPI
+    type: string
+    length: 200
+    synonym_ru: Ключ API
+    synonym_uk: Ключ API
+
+  - name: ВерсияAPI
+    type: string
+    length: 20
+    synonym_ru: Версия API
+    synonym_uk: Версія API
+
+  - name: АдресСервера
+    type: string
+    length: 100
+    synonym_ru: Адрес сервера
+    synonym_uk: Адреса сервера
+
+forms:
+  - name: Форма
+    default: true
+    properties:
+      Title_ru: Тестирование Stripe Tax
+      Title_uk: Тестування Stripe Tax
+      AutoTitle: false
+
+    events:
+      OnOpen: ПриОткрытии
+      OnCreateAtServer: ПриСозданииНаСервере
+
+    commands:
+    - name: ТестMarylandB2B
+      title_ru: Maryland B2B (3%)
+      title_uk: Maryland B2B (3%)
+      handler: ТестMarylandB2B
+      picture: StdPicture.ExecuteTask
+    - name: ТестMarylandB2C
+      title_ru: Maryland B2C (6%)
+      title_uk: Maryland B2C (6%)
+      handler: ТестMarylandB2C
+      picture: StdPicture.ExecuteTask
+    - name: ТестTexasSaaS
+      title_ru: Texas SaaS (80%)
+      title_uk: Texas SaaS (80%)
+      handler: ТестTexasSaaS
+      picture: StdPicture.ExecuteTask
+    - name: ПроверитьПодключение
+      title_ru: Проверить подключение
+      title_uk: Перевірити підключення
+      handler: ПроверитьПодключение
+      picture: StdPicture.Refresh
+    - name: ЗагрузитьНастройки
+      title_ru: Загрузить настройки
+      title_uk: Завантажити налаштування
+      handler: ЗагрузитьНастройки
+      picture: StdPicture.OpenFile
+    - name: ПодготовитьДанныеКлиента
+      title_ru: Подготовить данные
+      title_uk: Підготувати дані
+      handler: ПодготовитьДанныеКлиента
+      picture: StdPicture.ExecuteTask
+    - name: ЗаполнитьMarylandB2B
+      title_ru: Maryland B2B
+      title_uk: Maryland B2B
+      handler: ЗаполнитьMarylandB2B
+    - name: ЗаполнитьTexas
+      title_ru: Texas
+      title_uk: Texas
+      handler: ЗаполнитьTexas
+    - name: ВыполнитьПолныйТест
+      title_ru: Выполнить тест
+      title_uk: Виконати тест
+      handler: ВыполнитьПолныйТест
+      picture: StdPicture.ExecuteTask
+    - name: ЗаполнитьSaaS
+      title_ru: Заполнить SaaS
+      title_uk: Заповнити SaaS
+      handler: ЗаполнитьSaaS
+    - name: ЭкспортРезультатов
+      title_ru: Экспорт в JSON
+      title_uk: Експорт в JSON
+      handler: ЭкспортРезультатов
+      picture: StdPicture.SaveFile
+    - name: ОбновитьКэш
+      title_ru: Обновить
+      title_uk: Оновити
+      handler: ОбновитьКэш
+      picture: StdPicture.Refresh
+    - name: ОчиститьВесьКэш
+      title_ru: Очистить весь кэш
+      title_uk: Очистити весь кеш
+      handler: ОчиститьВесьКэш
+      picture: StdPicture.InputFieldClear
+    - name: ОчиститьУстаревшийКэш
+      title_ru: Очистить устаревший
+      title_uk: Очистити застарілий
+      handler: ОчиститьУстаревшийКэш
+    - name: ОбновитьСтатистику
+      title_ru: Обновить статистику
+      title_uk: Оновити статистику
+      handler: ОбновитьСтатистику
+      picture: StdPicture.Refresh
+    - name: ОчиститьЛог
+      title_ru: Очистить лог
+      title_uk: Очистити лог
+      handler: ОчиститьЛог
+      picture: StdPicture.InputFieldClear
+    value_tables:
+    # Таблица результатов расчета
+    - name: РезультатыРасчета
+      columns:
+        - name: НазваниеПоля
+          type: string
+          length: 200
+          synonym_ru: Название поля
+          synonym_uk: Назва поля
+        - name: Значение
+          type: string
+          length: 500
+          synonym_ru: Значение
+          synonym_uk: Значення
+        - name: Описание
+          type: string
+          length: 500
+          synonym_ru: Описание
+          synonym_uk: Опис
+
+    # История тестов
+    - name: ИсторияТестов
+      columns:
+        - name: ДатаВремя
+          type: date
+          synonym_ru: Дата и время
+          synonym_uk: Дата і час
+        - name: НазваниеТеста
+          type: string
+          length: 200
+          synonym_ru: Название теста
+          synonym_uk: Назва тесту
+        - name: Результат
+          type: string
+          length: 50
+          synonym_ru: Результат
+          synonym_uk: Результат
+        - name: ВремяВыполнения
+          type: number
+          digits: 10
+          fraction_digits: 3
+          synonym_ru: Время выполнения (сек)
+          synonym_uk: Час виконання (сек)
+        - name: Детали
+          type: string
+          length: 500
+          synonym_ru: Детали
+          synonym_uk: Деталі
+
+    # Кэш записи
+    - name: КэшЗаписи
+      columns:
+        - name: Контрагент
+          type: string
+          length: 200
+          synonym_ru: Контрагент
+          synonym_uk: Контрагент
+        - name: Номенклатура
+          type: string
+          length: 200
+          synonym_ru: Номенклатура
+          synonym_uk: Номенклатура
+        - name: Сумма
+          type: number
+          digits: 15
+          fraction_digits: 2
+          synonym_ru: Сумма
+          synonym_uk: Сума
+        - name: СтавкаНалога
+          type: number
+          digits: 5
+          fraction_digits: 2
+          synonym_ru: Ставка налога %
+          synonym_uk: Ставка податку %
+        - name: ЭффективнаяСтавка
+          type: number
+          digits: 5
+          fraction_digits: 2
+          synonym_ru: Эффективная ставка %
+          synonym_uk: Ефективна ставка %
+        - name: ДатаРасчета
+          type: date
+          synonym_ru: Дата расчета
+          synonym_uk: Дата розрахунку
+        - name: СрокДействия
+          type: date
+          synonym_ru: Срок действия
+          synonym_uk: Термін дії
+
+    # Статистика
+    - name: СтатистикаДанные
+      columns:
+        - name: Период
+          type: date
+          synonym_ru: Период
+          synonym_uk: Період
+        - name: КоличествоРасчетов
+          type: number
+          digits: 10
+          fraction_digits: 0
+          synonym_ru: Количество расчетов
+          synonym_uk: Кількість розрахунків
+        - name: КоличествоОшибок
+          type: number
+          digits: 10
+          fraction_digits: 0
+          synonym_ru: Количество ошибок
+          synonym_uk: Кількість помилок
+        - name: КоличествоИзКэша
+          type: number
+          digits: 10
+          fraction_digits: 0
+          synonym_ru: Из кэша
+          synonym_uk: З кешу
+        - name: СреднееВремяОтклика
+          type: number
+          digits: 10
+          fraction_digits: 3
+          synonym_ru: Среднее время отклика (сек)
+          synonym_uk: Середній час відповіді (сек)
+        - name: СуммаНалогов
+          type: number
+          digits: 15
+          fraction_digits: 2
+          synonym_ru: Сумма налогов
+          synonym_uk: Сума податків
+
+    elements:
+      - type: Pages
+        name: ГлавныеСтраницы
+        pages_representation: TabsOnTop
+        pages:
+          # Страница 1: Главная
+          - name: СтраницаГлавная
+            title: Главная
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокГлавная
+                title: "🧪 Интерактивное тестирование Stripe Tax API"
+
+              - type: UsualGroup
+                name: ГруппаБыстрыеТесты
+                title: Быстрые тесты
+                show_title: true
+                group_direction: Vertical
+                child_items:
+                  - type: UsualGroup
+                    name: ГруппаКнопокБыстрыхТестов
+                    group_direction: Horizontal
+                    show_title: false
+                    child_items:
+                      - type: Button
+                        name: ТестMarylandB2BКнопка
+                        command: ТестMarylandB2B
+                      - type: Button
+                        name: ТестMarylandB2CКнопка
+                        command: ТестMarylandB2C
+                      - type: Button
+                        name: ТестTexasSaaSКнопка
+                        command: ТестTexasSaaS
+
+                  - type: LabelField
+                    name: ПоследнийТестНазваниеПоле
+                    attribute: ПоследнийТестНазвание
+
+                  - type: LabelField
+                    name: ПоследнийТестРезультатПоле
+                    attribute: ПоследнийТестРезультат
+
+              - type: UsualGroup
+                name: ГруппаИнформация
+                title: Информация
+                show_title: true
+                group_direction: Vertical
+                child_items:
+                  - type: LabelField
+                    name: СтатусПодключенияПоле
+                    attribute: СтатусПодключения
+
+          # Страница 2: Подключение
+          - name: СтраницаПодключение
+            title: Подключение
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокПодключение
+                title: "Настройки подключения к Stripe Tax API"
+
+              - type: UsualGroup
+                name: ГруппаНастройки
+                title: Настройки
+                show_title: true
+                group_direction: Vertical
+                child_items:
+                  - type: InputField
+                    name: ОрганизацияПоле
+                    attribute: Организация
+                    title_location: Top
+
+                  - type: InputField
+                    name: КлючAPIПоле
+                    attribute: КлючAPI
+                    title_location: Top
+
+                  - type: InputField
+                    name: ВерсияAPIПоле
+                    attribute: ВерсияAPI
+                    title_location: Top
+
+                  - type: InputField
+                    name: АдресСервераПоле
+                    attribute: АдресСервера
+                    title_location: Top
+
+              - type: UsualGroup
+                name: ГруппаКнопокПодключения
+                group_direction: Horizontal
+                show_title: false
+                child_items:
+                  - type: Button
+                    name: ПроверитьПодключениеКнопка
+                    command: ПроверитьПодключение
+                  - type: Button
+                    name: ЗагрузитьНастройкиКнопка
+                    command: ЗагрузитьНастройки
+
+          # Страница 3: Тест клиента
+          - name: СтраницаТестКлиента
+            title: Тест клиента
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокТестКлиента
+                title: "Подготовка данных клиента для API"
+
+              - type: UsualGroup
+                name: ГруппаДанныеКлиента
+                title: Данные клиента
+                show_title: true
+                group_direction: Vertical
+                child_items:
+                  - type: InputField
+                    name: ТестовыйКонтрагентПоле
+                    attribute: ТестовыйКонтрагент
+                    title_location: Top
+
+                  - type: InputField
+                    name: АдресСтрока1Поле
+                    attribute: АдресСтрока1
+                    title_location: Top
+
+                  - type: InputField
+                    name: ГородПоле
+                    attribute: Город
+                    title_location: Top
+
+                  - type: InputField
+                    name: ШтатПоле
+                    attribute: Штат
+                    title_location: Top
+
+                  - type: InputField
+                    name: ПочтовыйИндексПоле
+                    attribute: ПочтовыйИндекс
+                    title_location: Top
+
+                  - type: InputField
+                    name: TaxIDПоле
+                    attribute: TaxID
+                    title_location: Top
+
+                  - type: LabelField
+                    name: ТипКлиентаПоле
+                    attribute: ТипКлиента
+
+              - type: UsualGroup
+                name: ГруппаКнопокТестаКлиента
+                group_direction: Horizontal
+                show_title: false
+                child_items:
+                  - type: Button
+                    name: ПодготовитьДанныеКлиентаКнопка
+                    command: ПодготовитьДанныеКлиента
+                  - type: Button
+                    name: ЗаполнитьMarylandB2BКнопка
+                    command: ЗаполнитьMarylandB2B
+                  - type: Button
+                    name: ЗаполнитьTexasКнопка
+                    command: ЗаполнитьTexas
+
+          # Страница 4: Тест расчета
+          - name: СтраницаТестРасчета
+            title: Тест расчета
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокТестРасчета
+                title: "Полный тест расчета налогов"
+
+              - type: UsualGroup
+                name: ГруппаДанныеТовара
+                title: Данные товара/услуги
+                show_title: true
+                group_direction: Vertical
+                child_items:
+                  - type: InputField
+                    name: ТестоваяНоменклатураПоле
+                    attribute: ТестоваяНоменклатура
+                    title_location: Top
+
+                  - type: InputField
+                    name: СуммаПоле
+                    attribute: Сумма
+                    title_location: Top
+
+                  - type: InputField
+                    name: КоличествоПоле
+                    attribute: Количество
+                    title_location: Top
+
+                  - type: InputField
+                    name: TaxCodeПоле
+                    attribute: TaxCode
+                    title_location: Top
+                    input_hint_ru: "txcd_10103000 для SaaS"
+                    input_hint_uk: "txcd_10103000 для SaaS"
+
+              - type: UsualGroup
+                name: ГруппаКнопокРасчета
+                group_direction: Horizontal
+                show_title: false
+                child_items:
+                  - type: Button
+                    name: ВыполнитьПолныйТестКнопка
+                    command: ВыполнитьПолныйТест
+                  - type: Button
+                    name: ЗаполнитьSaaSКнопка
+                    command: ЗаполнитьSaaS
+
+          # Страница 5: Результаты
+          - name: СтраницаРезультаты
+            title: Результаты
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокРезультаты
+                title: "Детальный разбор результатов расчета"
+
+              - type: Table
+                name: РезультатыРасчетаТаблица
+                tabular_section: РезультатыРасчета
+                is_value_table: true
+
+              - type: UsualGroup
+                name: ГруппаКнопокРезультатов
+                group_direction: Horizontal
+                show_title: false
+                child_items:
+                  - type: Button
+                    name: ЭкспортРезультатовКнопка
+                    command: ЭкспортРезультатов
+
+              - type: Table
+                name: ИсторияТестовТаблица
+                tabular_section: ИсторияТестов
+                is_value_table: true
+
+          # Страница 6: Кэш
+          - name: СтраницаКэш
+            title: Кэш
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокКэш
+                title: "Управление кэшем налоговых расчетов"
+
+              - type: Table
+                name: КэшЗаписиТаблица
+                tabular_section: КэшЗаписи
+                is_value_table: true
+
+              - type: UsualGroup
+                name: ГруппаКнопокКэша
+                group_direction: Horizontal
+                show_title: false
+                child_items:
+                  - type: Button
+                    name: ОбновитьКэшКнопка
+                    command: ОбновитьКэш
+                  - type: Button
+                    name: ОчиститьВесьКэшКнопка
+                    command: ОчиститьВесьКэш
+                  - type: Button
+                    name: ОчиститьУстаревшийКэшКнопка
+                    command: ОчиститьУстаревшийКэш
+
+          # Страница 7: Статистика
+          - name: СтраницаСтатистика
+            title: Статистика
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокСтатистика
+                title: "Статистика вызовов Stripe Tax API"
+
+              - type: Table
+                name: СтатистикаДанныеТаблица
+                tabular_section: СтатистикаДанные
+                is_value_table: true
+
+              - type: UsualGroup
+                name: ГруппаКнопокСтатистики
+                group_direction: Horizontal
+                show_title: false
+                child_items:
+                  - type: Button
+                    name: ОбновитьСтатистикуКнопка
+                    command: ОбновитьСтатистику
+
+          # Страница 8: Лог
+          - name: СтраницаЛог
+            title: Лог
+            child_items:
+              - type: LabelDecoration
+                name: ЗаголовокЛог
+                title: "Лог всех операций"
+
+              - type: InputField
+                name: ЛогОперацийПоле
+                attribute: ЛогОпераций
+                title_location: None
+                multiline: true
+
+              - type: UsualGroup
+                name: ГруппаКнопокЛога
+                group_direction: Horizontal
+                show_title: false
+                child_items:
+                  - type: Button
+                    name: ОчиститьЛогКнопка
+                    command: ОчиститьЛог
+
+    # Быстрые тесты
+
+    # Подключение
+
+    # Тест клиента
+
+    # Тест расчета
+
+    # Результаты
+
+    # Кэш
+
+    # Статистика
+
+    # Лог

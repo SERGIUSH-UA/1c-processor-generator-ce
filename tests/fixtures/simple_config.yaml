@@ -1,0 +1,55 @@
+# Простий тестовий процесор
+
+processor:
+  name: ТестовыйПроцессор
+  synonym_ru: Тестовый процессор
+  synonym_uk: Тестовий процесор
+  platform_version: "2.11"
+
+attributes:
+  - name: ТекстоваяСтрока
+    type: string
+    length: 100
+    synonym_ru: Текстовая строка
+    synonym_uk: Текстовий рядок
+
+  - name: Число
+    type: number
+    digits: 10
+    fraction_digits: 2
+    synonym_ru: Число
+    synonym_uk: Число
+
+forms:
+  - name: Форма
+    default: true
+    properties:
+      title: true
+      title_ru: Тестовый процессор
+      title_uk: Тестовий процесор
+      auto_title: false
+
+    events:
+      OnOpen: ПриОткрытии
+
+    elements:
+      - type: InputField
+        name: ТекстоваяСтрокаПоле
+        attribute: ТекстоваяСтрока
+
+      - type: InputField
+        name: ЧислоПоле
+        attribute: Число
+
+      - type: Button
+        name: ВыполнитьДействиеКнопка
+        command: ВыполнитьДействие
+
+    commands:
+      - name: ВыполнитьДействие
+        title_ru: Выполнить действие
+        title_uk: Виконати дію
+        handler: ВыполнитьДействие
+        tooltip_ru: Выполнить действие
+        tooltip_uk: Виконати дію
+        shortcut: F5

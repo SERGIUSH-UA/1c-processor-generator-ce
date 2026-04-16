@@ -1,0 +1,1792 @@
+languages: [ru, uk, en]
+
+processor:
+  name: УправлениеПроектами
+  comment_ru: Комплексная система управления проектами, задачами и ресурсами
+  comment_uk: Комплексна система управління проектами, задачами та ресурсами
+  comment_en: Comprehensive project, task and resource management system
+  platform_version: '2.11'
+  synonym: "Управление проектами | Управління проектами | Project Management"
+
+attributes:
+  - name: ФильтрДатаНачала
+    type: date
+    synonym: "Дата начала | Дата початку | Start Date"
+  - name: ФильтрДатаОкончания
+    type: date
+    synonym: "Дата окончания | Дата закінчення | End Date"
+  - name: ФильтрПроект
+    type: string
+    synonym: "Проект | Проект | Project"
+  - name: ФильтрИсполнитель
+    type: string
+    synonym: "Исполнитель | Виконавець | Assignee"
+  - name: ФильтрСтатус
+    type: string
+    length: 50
+    synonym: "Статус | Статус | Status"
+  - name: ФильтрПриоритет
+    type: string
+    length: 20
+    synonym: "Приоритет | Пріоритет | Priority"
+  - name: ПоказыватьЗакрытые
+    type: boolean
+    synonym: "Показывать закрытые | Показувати закриті | Show Closed"
+  - name: ПоказыватьАрхивные
+    type: boolean
+    synonym: "Показывать архивные | Показувати архівні | Show Archived"
+  - name: АвтообновлениеСекунд
+    type: number
+    synonym: "Автообновление (сек) | Автооновлення (сек) | Auto-refresh (sec)"
+  - name: ГруппировкаПоПроектам
+    type: boolean
+    synonym: "Группировка по проектам | Групування по проектах | Group by Projects"
+  - name: ПутьЭкспорта
+    type: string
+    synonym: "Путь экспорта | Шлях експорту | Export Path"
+  - name: ФорматЭкспорта
+    type: string
+    length: 10
+    synonym: "Формат экспорта | Формат експорту | Export Format"
+  - name: ТекущийПроектИД
+    type: string
+    length: 36
+    synonym: "Текущий проект (ID) | Поточний проект (ID) | Current Project (ID)"
+  - name: ТекущаяЗадачаИД
+    type: string
+    length: 36
+    synonym: "Текущая задача (ID) | Поточна задача (ID) | Current Task (ID)"
+  - name: РежимОтображения
+    type: string
+    length: 20
+    synonym: "Режим отображения | Режим відображення | Display Mode"
+  - name: ЦветовойРежим
+    type: string
+    length: 20
+    synonym: "Цветовой режим | Кольоровий режим | Color Mode"
+  - name: РазмерШрифта
+    type: number
+    synonym: "Размер шрифта | Розмір шрифту | Font Size"
+  - name: ПоследнееОбновление
+    type: date
+    synonym: "Последнее обновление | Останнє оновлення | Last Update"
+  - name: КоличествоЗагруженных
+    type: number
+    synonym: "Количество загруженных | Кількість завантажених | Loaded Count"
+  - name: ВерсияДанных
+    type: string
+    length: 20
+    synonym: "Версия данных | Версія даних | Data Version"
+
+tabular_sections:
+  - name: Проекты
+    synonym: "Проекты | Проекти | Projects"
+    columns:
+      - name: ПроектИД
+        type: string
+        length: 36
+        synonym: "ID проекта | ID проекту | Project ID"
+      - name: Название
+        type: string
+        synonym: "Название | Назва | Name"
+      - name: Код
+        type: string
+        length: 20
+        synonym: "Код | Код | Code"
+      - name: Описание
+        type: string
+        synonym: "Описание | Опис | Description"
+      - name: Статус
+        type: string
+        length: 50
+        synonym: "Статус | Статус | Status"
+      - name: Приоритет
+        type: string
+        length: 20
+        synonym: "Приоритет | Пріоритет | Priority"
+      - name: ДатаНачала
+        type: date
+        synonym: "Дата начала | Дата початку | Start Date"
+      - name: ДатаОкончания
+        type: date
+        synonym: "Дата окончания | Дата закінчення | End Date"
+      - name: Бюджет
+        type: number
+        synonym: "Бюджет | Бюджет | Budget"
+      - name: ФактическиеЗатраты
+        type: number
+        synonym: "Фактические затраты | Фактичні витрати | Actual Cost"
+      - name: Прогресс
+        type: number
+        synonym: "Прогресс (%) | Прогрес (%) | Progress (%)"
+      - name: РуководительПроекта
+        type: string
+        synonym: "Руководитель проекта | Керівник проекту | Project Manager"
+      - name: Заказчик
+        type: string
+        synonym: "Заказчик | Замовник | Customer"
+      - name: КоличествоЗадач
+        type: number
+        synonym: "Количество задач | Кількість задач | Task Count"
+      - name: КоличествоУчастников
+        type: number
+        synonym: "Количество участников | Кількість учасників | Member Count"
+
+  - name: ЗадачиПроекта
+    synonym: "Задачи | Задачі | Tasks"
+    columns:
+      - name: ЗадачаИД
+        type: string
+        length: 36
+        synonym: "ID задачи | ID задачі | Task ID"
+      - name: ПроектИД
+        type: string
+        length: 36
+        synonym: "ID проекта | ID проекту | Project ID"
+      - name: Название
+        type: string
+        synonym: "Название | Назва | Name"
+      - name: Описание
+        type: string
+        synonym: "Описание | Опис | Description"
+      - name: Статус
+        type: string
+        length: 50
+        synonym: "Статус | Статус | Status"
+      - name: Приоритет
+        type: string
+        length: 20
+        synonym: "Приоритет | Пріоритет | Priority"
+      - name: Тип
+        type: string
+        length: 50
+        synonym: "Тип | Тип | Type"
+      - name: Исполнитель
+        type: string
+        synonym: "Исполнитель | Виконавець | Assignee"
+      - name: Автор
+        type: string
+        synonym: "Автор | Автор | Author"
+      - name: ДатаСоздания
+        type: date
+        synonym: "Дата создания | Дата створення | Created Date"
+      - name: ДатаНачала
+        type: date
+        synonym: "Дата начала | Дата початку | Start Date"
+      - name: ДатаОкончания
+        type: date
+        synonym: "Дата окончания | Дата закінчення | Due Date"
+      - name: ФактическоеВремя
+        type: number
+        synonym: "Фактическое время (ч) | Фактичний час (год) | Actual Time (h)"
+      - name: ПлановоеВремя
+        type: number
+        synonym: "Плановое время (ч) | Плановий час (год) | Estimated Time (h)"
+      - name: ЗавершеноПроцентов
+        type: number
+        synonym: "Завершено (%) | Завершено (%) | Completed (%)"
+      - name: Теги
+        type: string
+        synonym: "Теги | Теги | Tags"
+
+  - name: Ресурсы
+    synonym: "Ресурсы | Ресурси | Resources"
+    columns:
+      - name: РесурсИД
+        type: string
+        length: 36
+        synonym: "ID ресурса | ID ресурсу | Resource ID"
+      - name: ПроектИД
+        type: string
+        length: 36
+        synonym: "ID проекта | ID проекту | Project ID"
+      - name: ИмяРесурса
+        type: string
+        synonym: "Имя ресурса | Ім'я ресурсу | Resource Name"
+      - name: ТипРесурса
+        type: string
+        length: 50
+        synonym: "Тип ресурса | Тип ресурсу | Resource Type"
+      - name: Роль
+        type: string
+        synonym: "Роль | Роль | Role"
+      - name: Email
+        type: string
+        synonym: "Email | Email | Email"
+      - name: Телефон
+        type: string
+        length: 50
+        synonym: "Телефон | Телефон | Phone"
+      - name: Доступность
+        type: number
+        synonym: "Доступность (%) | Доступність (%) | Availability (%)"
+      - name: СтоимостьЧаса
+        type: number
+        synonym: "Стоимость часа | Вартість години | Hourly Rate"
+      - name: ЗагрузкаЧасов
+        type: number
+        synonym: "Загрузка (часов) | Завантаження (годин) | Workload (hours)"
+      - name: Статус
+        type: string
+        length: 50
+        synonym: "Статус | Статус | Status"
+      - name: Примечание
+        type: string
+        synonym: "Примечание | Примітка | Note"
+
+object_module:
+  file: object_module.bsl
+
+forms:
+  - name: Форма
+    handlers_file: handlers_Форма.bsl
+    default: true
+    width: 120
+    height: 40
+    synonym: "Управление проектами | Управління проектами | Project Management"
+    value_tables:
+      - name: СтатистикаПроектов
+        synonym: "Статистика проектов | Статистика проектів | Project Statistics"
+        columns:
+          - name: Показатель
+            type: string
+            synonym: "Показатель | Показник | Metric"
+          - name: Значение
+            type: string
+            synonym: "Значение | Значення | Value"
+          - name: Процент
+            type: number
+            synonym: "Процент | Відсоток | Percentage"
+    commands:
+      - name: СоздатьПроект
+        handler: СоздатьПроект
+        picture: StdPicture.CreateListItem
+        shortcut: Insert
+        representation: PictureAndText
+        title: "Создать проект | Створити проект | Create Project"
+      - name: РедактироватьПроект
+        handler: РедактироватьПроект
+        picture: StdPicture.Change
+        shortcut: F2
+        representation: PictureAndText
+        title: "Редактировать проект | Редагувати проект | Edit Project"
+      - name: УдалитьПроект
+        handler: УдалитьПроект
+        picture: StdPicture.MarkToDelete
+        shortcut: Delete
+        representation: PictureAndText
+        title: "Удалить проект | Видалити проект | Delete Project"
+      - name: КопироватьПроект
+        handler: КопироватьПроект
+        representation: Text
+        title: "Копировать проект | Копіювати проект | Copy Project"
+      - name: СоздатьЗадачу
+        handler: СоздатьЗадачу
+        picture: StdPicture.CreateListItem
+        representation: PictureAndText
+        title: "Создать задачу | Створити задачу | Create Task"
+      - name: РедактироватьЗадачу
+        handler: РедактироватьЗадачу
+        picture: StdPicture.Change
+        representation: PictureAndText
+        title: "Редактировать задачу | Редагувати задачу | Edit Task"
+      - name: УдалитьЗадачу
+        handler: УдалитьЗадачу
+        picture: StdPicture.MarkToDelete
+        representation: PictureAndText
+        title: "Удалить задачу | Видалити задачу | Delete Task"
+      - name: ДобавитьРесурс
+        handler: ДобавитьРесурс
+        picture: StdPicture.User
+        representation: PictureAndText
+        title: "Добавить ресурс | Додати ресурс | Add Resource"
+      - name: УдалитьРесурс
+        handler: УдалитьРесурс
+        picture: StdPicture.MarkToDelete
+        representation: PictureAndText
+        title: "Удалить ресурс | Видалити ресурс | Remove Resource"
+      - name: ОбновитьДанные
+        handler: ОбновитьДанные
+        picture: StdPicture.Refresh
+        shortcut: F5
+        representation: PictureAndText
+        title: "Обновить данные | Оновити дані | Refresh Data"
+      - name: ЗагрузитьДанные
+        handler: ЗагрузитьДанные
+        representation: Text
+        title: "Загрузить данные | Завантажити дані | Load Data"
+      - name: ВыгрузитьДанные
+        handler: ВыгрузитьДанные
+        representation: Text
+        title: "Выгрузить данные | Вивантажити дані | Export Data"
+      - name: СформироватьОтчет
+        handler: СформироватьОтчет
+        picture: StdPicture.Report
+        representation: PictureAndText
+        title: "Сформировать отчет | Сформувати звіт | Generate Report"
+      - name: ОткрытьНастройки
+        handler: ОткрытьНастройки
+        picture: StdPicture.ListSettings
+        representation: PictureAndText
+        title: "Настройки | Налаштування | Settings"
+      - name: ОтобразитьСтатистику
+        handler: ОтобразитьСтатистику
+        picture: StdPicture.Report
+        representation: PictureAndText
+        title: "Статистика | Статистика | Statistics"
+    events:
+      OnOpen: ПриОткрытии
+      OnCreateAtServer: ПриСозданииНаСервере
+    elements:
+      - type: LabelDecoration
+        name: ЗаголовокГлавный
+        font_style:
+          bold: true
+          size: 14
+        horizontal_stretch: true
+        title: "Система Управления Проектами - Комплексное управление проектами, задачами и ресурсами | Система Управління Проектами - Комплексне управління проектами, задачами та ресурсами | Project Management System - Comprehensive project, task and resource management"
+      - type: Pages
+        name: ГлавныеВкладки
+        pages_representation: TabsOnTop
+        pages:
+          - name: СтраницаПроекты
+            title: "Проекты | Проекти | Projects"
+            elements:
+              - type: UsualGroup
+                name: ГруппаФильтровПроектов
+                group_direction: Horizontal
+                representation: WeakSeparation
+                behavior: Collapsible
+                show_title: true
+                title: "Фильтры | Фільтри | Filters"
+                elements:
+                  - type: InputField
+                    name: ПолеФильтрПроект
+                    attribute: ФильтрПроект
+                    width: 20
+                    input_hint: Введите название проекта
+                    title: "Проект | Проект | Project"
+                    events:
+                      OnChange: ПриИзмененииФильтра
+                  - type: InputField
+                    name: ПолеФильтрДатаНачалаПроекта
+                    attribute: ФильтрДатаНачала
+                    width: 15
+                    title: "Дата начала | Дата початку | Start Date"
+                    events:
+                      OnChange: ПриИзмененииФильтра
+                  - type: InputField
+                    name: ПолеФильтрДатаОкончанияПроекта
+                    attribute: ФильтрДатаОкончания
+                    width: 15
+                    title: "Дата окончания | Дата закінчення | End Date"
+                    events:
+                      OnChange: ПриИзмененииФильтра
+                  - type: CheckBoxField
+                    name: ФлажокПоказыватьЗакрытые
+                    attribute: ПоказыватьЗакрытые
+                    title_location: Right
+                    title: "Показывать закрытые | Показувати закриті | Show Closed"
+                    events:
+                      OnChange: ПриИзмененииФильтра
+              - type: Table
+                name: ТаблицаПроектов
+                tabular_section: Проекты
+                height: 15
+                read_only: false
+                horizontal_stretch: true
+                columns:
+                  - name: Код
+                    width: 10
+                  - name: Название
+                    width: 30
+                  - name: Статус
+                    width: 15
+                  - name: Приоритет
+                    width: 12
+                  - name: ДатаНачала
+                    width: 12
+                  - name: ДатаОкончания
+                    width: 12
+                  - name: Прогресс
+                    width: 10
+                  - name: РуководительПроекта
+                    width: 20
+                  - name: КоличествоЗадач
+                    width: 10
+                events:
+                  OnActivateRow: ПроектыПриАктивизацииСтроки
+                  Selection: ПроектыВыбор
+              - type: ButtonGroup
+                name: ГруппаКнопокПроектов
+                group_direction: Horizontal
+                elements:
+                  - type: Button
+                    name: КнопкаСоздатьПроект
+                    command: СоздатьПроект
+                    width: 15
+                  - type: Button
+                    name: КнопкаРедактироватьПроект
+                    command: РедактироватьПроект
+                    width: 15
+                  - type: Button
+                    name: КнопкаУдалитьПроект
+                    command: УдалитьПроект
+                    width: 15
+                  - type: Button
+                    name: КнопкаКопироватьПроект
+                    command: КопироватьПроект
+                    width: 15
+              - type: UsualGroup
+                name: ГруппаСтатистикиПроекта
+                representation: NormalSeparation
+                show_title: true
+                title: "Статистика выбранного проекта | Статистика вибраного проекту | Selected Project Statistics"
+                elements:
+                  - type: LabelDecoration
+                    name: НадписьДетальнаяИнформация
+                    horizontal_stretch: true
+                    title: "Выберите проект для просмотра детальной информации | Оберіть проект для перегляду детальної інформації | Select a project to view detailed information"
+          - name: СтраницаЗадачи
+            title: "Задачи | Задачі | Tasks"
+            elements:
+              - type: UsualGroup
+                name: ГруппаФильтровЗадач
+                group_direction: Horizontal
+                representation: WeakSeparation
+                behavior: Collapsible
+                show_title: true
+                title: "Фильтры | Фільтри | Filters"
+                elements:
+                  - type: InputField
+                    name: ПолеФильтрИсполнитель
+                    attribute: ФильтрИсполнитель
+                    width: 20
+                    input_hint: Введите имя исполнителя
+                    title: "Исполнитель | Виконавець | Assignee"
+                    events:
+                      OnChange: ПриИзмененииФильтраЗадач
+                  - type: InputField
+                    name: ПолеФильтрСтатус
+                    attribute: ФильтрСтатус
+                    width: 15
+                    title: "Статус | Статус | Status"
+                    choice_list:
+                      - {v: All, ru: <Все>}
+                      - {v: New, ru: Новая}
+                      - {v: InProgress, ru: В работе}
+                      - {v: Done, ru: Выполнена}
+                      - {v: Closed, ru: Закрыта}
+                    events:
+                      OnChange: ПриИзмененииФильтраЗадач
+                  - type: InputField
+                    name: ПолеФильтрПриоритет
+                    attribute: ФильтрПриоритет
+                    width: 15
+                    title: "Приоритет | Пріоритет | Priority"
+                    choice_list:
+                      - {v: All, ru: <Все>}
+                      - {v: Low, ru: Низкий}
+                      - {v: Medium, ru: Средний}
+                      - {v: High, ru: Высокий}
+                      - {v: Critical, ru: Критический}
+                    events:
+                      OnChange: ПриИзмененииФильтраЗадач
+                  - type: CheckBoxField
+                    name: ФлажокГруппировкаПоПроектам
+                    attribute: ГруппировкаПоПроектам
+                    title_location: Right
+                    title: "Группировка по проектам | Групування по проектах | Group by Projects"
+                    events:
+                      OnChange: ПриИзмененииФильтраЗадач
+              - type: Table
+                name: ТаблицаЗадач
+                tabular_section: ЗадачиПроекта
+                height: 15
+                read_only: false
+                horizontal_stretch: true
+                columns:
+                  - name: Название
+                    width: 30
+                  - name: Статус
+                    width: 15
+                  - name: Приоритет
+                    width: 12
+                  - name: Тип
+                    width: 15
+                  - name: Исполнитель
+                    width: 20
+                  - name: Автор
+                    width: 20
+                  - name: ДатаНачала
+                    width: 12
+                  - name: ДатаОкончания
+                    width: 12
+                  - name: ЗавершеноПроцентов
+                    width: 10
+                events:
+                  OnActivateRow: ЗадачиПриАктивизацииСтроки
+                  Selection: ЗадачиВыбор
+                  OnStartEdit: ЗадачиПриНачалеРедактирования
+              - type: ButtonGroup
+                name: ГруппаКнопокЗадач
+                group_direction: Horizontal
+                elements:
+                  - type: Button
+                    name: КнопкаСоздатьЗадачу
+                    command: СоздатьЗадачу
+                    width: 15
+                  - type: Button
+                    name: КнопкаРедактироватьЗадачу
+                    command: РедактироватьЗадачу
+                    width: 15
+                  - type: Button
+                    name: КнопкаУдалитьЗадачу
+                    command: УдалитьЗадачу
+                    width: 15
+          - name: СтраницаРесурсы
+            title: "Ресурсы | Ресурси | Resources"
+            elements:
+              - type: LabelDecoration
+                name: ЗаголовокРесурсов
+                horizontal_stretch: true
+                title: "Управление ресурсами проекта (команда, оборудование, материалы) | Управління ресурсами проекту (команда, обладнання, матеріали) | Project resource management (team, equipment, materials)"
+              - type: Table
+                name: ТаблицаРесурсов
+                tabular_section: Ресурсы
+                height: 18
+                read_only: false
+                horizontal_stretch: true
+                columns:
+                  - name: ИмяРесурса
+                    width: 25
+                  - name: ТипРесурса
+                    width: 15
+                  - name: Роль
+                    width: 20
+                  - name: Email
+                    width: 25
+                  - name: Телефон
+                    width: 15
+                  - name: Доступность
+                    width: 12
+                  - name: СтоимостьЧаса
+                    width: 12
+                  - name: ЗагрузкаЧасов
+                    width: 12
+                  - name: Статус
+                    width: 15
+                events:
+                  OnActivateRow: РесурсыПриАктивизацииСтроки
+              - type: ButtonGroup
+                name: ГруппаКнопокРесурсов
+                group_direction: Horizontal
+                elements:
+                  - type: Button
+                    name: КнопкаДобавитьРесурс
+                    command: ДобавитьРесурс
+                    width: 15
+                  - type: Button
+                    name: КнопкаУдалитьРесурс
+                    command: УдалитьРесурс
+                    width: 15
+      - type: UsualGroup
+        name: ГруппаОбщегоУправления
+        group_direction: Horizontal
+        representation: None
+        elements:
+          - type: ButtonGroup
+            name: ГруппаОбщихКнопок
+            group_direction: Horizontal
+            elements:
+              - type: Button
+                name: КнопкаОбновитьДанные
+                command: ОбновитьДанные
+                width: 15
+              - type: Button
+                name: КнопкаЗагрузитьДанные
+                command: ЗагрузитьДанные
+                width: 15
+              - type: Button
+                name: КнопкаВыгрузитьДанные
+                command: ВыгрузитьДанные
+                width: 15
+              - type: Button
+                name: КнопкаСформироватьОтчет
+                command: СформироватьОтчет
+                width: 15
+              - type: Button
+                name: КнопкаОткрытьНастройки
+                command: ОткрытьНастройки
+                width: 15
+              - type: Button
+                name: КнопкаОтобразитьСтатистику
+                command: ОтобразитьСтатистику
+                width: 15
+      - type: UsualGroup
+        name: ГруппаСтатусБар
+        group_direction: Horizontal
+        representation: None
+        elements:
+          - type: LabelField
+            name: НадписьПоследнееОбновление
+            attribute: ПоследнееОбновление
+            width: 25
+            title: "Последнее обновление: | Останнє оновлення: | Last update:"
+          - type: LabelField
+            name: НадписьКоличествоЗагруженных
+            attribute: КоличествоЗагруженных
+            width: 20
+            title: "Загружено записей: | Завантажено записів: | Loaded records:"
+          - type: LabelField
+            name: НадписьВерсияДанных
+            attribute: ВерсияДанных
+            width: 20
+            title: "Версия данных: | Версія даних: | Data version:"
+
+  - name: КарточкаПроекта
+    handlers_file: handlers_КарточкаПроекта.bsl
+    default: false
+    width: 80
+    height: 35
+    window_opening_mode: LockOwnerWindow
+    synonym: "Карточка проекта | Картка проекту | Project Card"
+    form_attributes:
+      - name: РежимСоздания
+        type: boolean
+      - name: ИмяОсновнойФормы
+        type: string
+      # Атрибуты для редактирования данных проекта
+      - name: ПроектИД
+        type: string
+        length: 36
+        synonym: "ID проекта | ID проекту | Project ID"
+      - name: Код
+        type: string
+        length: 20
+        synonym: "Код | Код | Code"
+      - name: Название
+        type: string
+        synonym: "Название | Назва | Name"
+      - name: Описание
+        type: string
+        synonym: "Описание | Опис | Description"
+      - name: Статус
+        type: string
+        length: 50
+        synonym: "Статус | Статус | Status"
+      - name: Приоритет
+        type: string
+        length: 20
+        synonym: "Приоритет | Пріоритет | Priority"
+      - name: Прогресс
+        type: number
+        synonym: "Прогресс (%) | Прогрес (%) | Progress (%)"
+      - name: ДатаНачала
+        type: date
+        synonym: "Дата начала | Дата початку | Start Date"
+      - name: ДатаОкончания
+        type: date
+        synonym: "Дата окончания | Дата закінчення | End Date"
+      - name: Бюджет
+        type: number
+        synonym: "Бюджет | Бюджет | Budget"
+      - name: ФактическиеЗатраты
+        type: number
+        synonym: "Фактические затраты | Фактичні витрати | Actual Cost"
+      - name: РуководительПроекта
+        type: string
+        synonym: "Руководитель проекта | Керівник проекту | Project Manager"
+      - name: Заказчик
+        type: string
+        synonym: "Заказчик | Замовник | Customer"
+    value_tables:
+      - name: УчастникиПроекта
+        synonym: "Участники проекта | Учасники проекту | Project Members"
+        columns:
+          - name: Имя
+            type: string
+            synonym: "Имя | Ім'я | Name"
+          - name: Роль
+            type: string
+            synonym: "Роль | Роль | Role"
+          - name: Email
+            type: string
+            synonym: "Email | Email | Email"
+          - name: ДатаНачала
+            type: date
+            synonym: "Дата начала | Дата початку | Start Date"
+          - name: ДатаОкончания
+            type: date
+            synonym: "Дата окончания | Дата закінчення | End Date"
+    commands:
+      - name: СохранитьПроект
+        handler: СохранитьПроект
+        picture: StdPicture.WriteAndClose
+        shortcut: Ctrl+S
+        representation: PictureAndText
+        title: "Сохранить | Зберегти | Save"
+      - name: ОтменитьПроект
+        handler: ОтменитьПроект
+        picture: StdPicture.Close
+        shortcut: Escape
+        representation: PictureAndText
+        title: "Отмена | Відміна | Cancel"
+      - name: ДобавитьУчастника
+        handler: ДобавитьУчастника
+        picture: StdPicture.User
+        representation: PictureAndText
+        title: "Добавить участника | Додати учасника | Add Member"
+      - name: УдалитьУчастника
+        handler: УдалитьУчастника
+        picture: StdPicture.MarkToDelete
+        representation: PictureAndText
+        title: "Удалить участника | Видалити учасника | Remove Member"
+      - name: РассчитатьБюджет
+        handler: РассчитатьБюджет
+        picture: StdPicture.ExecuteTask
+        representation: PictureAndText
+        title: "Рассчитать бюджет | Розрахувати бюджет | Calculate Budget"
+      - name: ПросмотрЗадач
+        handler: ПросмотрЗадач
+        picture: StdPicture.Report
+        representation: PictureAndText
+        title: "Просмотр задач | Перегляд задач | View Tasks"
+      - name: ИсторияИзменений
+        handler: ИсторияИзменений
+        picture: StdPicture.Information
+        representation: PictureAndText
+        title: "История изменений | Історія змін | Change History"
+      - name: ЭкспортПроекта
+        handler: ЭкспортПроекта
+        representation: Text
+        title: "Экспорт проекта | Експорт проекту | Export Project"
+    events:
+      OnOpen: ПриОткрытии
+      OnCreateAtServer: ПриСозданииНаСервере
+    elements:
+      - type: LabelDecoration
+        name: ЗаголовокКарточки
+        font_style:
+          bold: true
+          size: 12
+        horizontal_stretch: true
+        title: "Карточка проекта - Детальная информация | Картка проекту - Детальна інформація | Project Card - Detailed Information"
+      - type: Pages
+        name: СекцииПроекта
+        pages_representation: TabsOnTop
+        pages:
+          - name: СтраницаОсновнаяИнформация
+            title: "Основная информация | Основна інформація | Basic Information"
+            elements:
+              - type: UsualGroup
+                name: ГруппаОсновныхПолей
+                group_direction: Vertical
+                representation: WeakSeparation
+                elements:
+                  - type: UsualGroup
+                    name: ГруппаИдентификация
+                    group_direction: Horizontal
+                    show_title: true
+                    title: "Идентификация | Ідентифікація | Identification"
+                    elements:
+                      - type: InputField
+                        name: ПолеПроектКод
+                        attribute: Код
+                        width: 15
+                        title: "Код проекта | Код проекту | Project Code"
+                      - type: InputField
+                        name: ПолеПроектНазвание
+                        attribute: Название
+                        width: 40
+                        title: "Название проекта | Назва проекту | Project Name"
+                  - type: UsualGroup
+                    name: ГруппаОписание
+                    show_title: true
+                    title: "Описание | Опис | Description"
+                    elements:
+                      - type: InputField
+                        name: ПолеПроектОписание
+                        attribute: Описание
+                        title_location: Top
+                        width: 60
+                        height: 5
+                        multiline: true
+                        title: "Описание | Опис | Description"
+                  - type: UsualGroup
+                    name: ГруппаСтатусИПриоритет
+                    group_direction: Horizontal
+                    show_title: true
+                    title: "Статус и приоритет | Статус і пріоритет | Status and Priority"
+                    elements:
+                      - type: InputField
+                        name: ПолеПроектСтатус
+                        attribute: Статус
+                        width: 20
+                        title: "Статус | Статус | Status"
+                        choice_list:
+                          - {v: Planning, ru: Планирование}
+                          - {v: Active, ru: Активный}
+                          - {v: Paused, ru: Приостановлен}
+                          - {v: Done, ru: Завершен}
+                          - {v: Cancelled, ru: Отменен}
+                      - type: InputField
+                        name: ПолеПроектПриоритет
+                        attribute: Приоритет
+                        width: 15
+                        title: "Приоритет | Пріоритет | Priority"
+                        choice_list:
+                          - {v: Low, ru: Низкий}
+                          - {v: Medium, ru: Средний}
+                          - {v: High, ru: Высокий}
+                          - {v: Critical, ru: Критический}
+                      - type: InputField
+                        name: ПолеПроектПрогресс
+                        attribute: Прогресс
+                        width: 10
+                        title: "Прогресс (%) | Прогрес (%) | Progress (%)"
+          - name: СтраницаДатыИБюджет
+            title: "Даты и бюджет | Дати та бюджет | Dates and Budget"
+            elements:
+              - type: UsualGroup
+                name: ГруппаДат
+                group_direction: Horizontal
+                show_title: true
+                title: "Сроки проекта | Терміни проекту | Project Timeline"
+                elements:
+                  - type: InputField
+                    name: ПолеПроектДатаНачала
+                    attribute: ДатаНачала
+                    width: 20
+                    title: "Дата начала | Дата початку | Start Date"
+                  - type: InputField
+                    name: ПолеПроектДатаОкончания
+                    attribute: ДатаОкончания
+                    width: 20
+                    title: "Дата окончания | Дата закінчення | End Date"
+              - type: UsualGroup
+                name: ГруппаБюджета
+                group_direction: Horizontal
+                show_title: true
+                title: "Финансы | Фінанси | Finances"
+                elements:
+                  - type: InputField
+                    name: ПолеПроектБюджет
+                    attribute: Бюджет
+                    width: 20
+                    title: "Бюджет | Бюджет | Budget"
+                  - type: InputField
+                    name: ПолеПроектФактическиеЗатраты
+                    attribute: ФактическиеЗатраты
+                    width: 20
+                    read_only: true
+                    title: "Фактические затраты | Фактичні витрати | Actual Cost"
+                  - type: Button
+                    name: КнопкаРассчитатьБюджет
+                    command: РассчитатьБюджет
+                    width: 20
+          - name: СтраницаЛюди
+            title: "Люди | Люди | People"
+            elements:
+              - type: UsualGroup
+                name: ГруппаОтветственных
+                group_direction: Horizontal
+                show_title: true
+                title: "Ответственные лица | Відповідальні особи | Responsible Persons"
+                elements:
+                  - type: InputField
+                    name: ПолеПроектРуководитель
+                    attribute: РуководительПроекта
+                    width: 25
+                    title: "Руководитель проекта | Керівник проекту | Project Manager"
+                  - type: InputField
+                    name: ПолеПроектЗаказчик
+                    attribute: Заказчик
+                    width: 25
+                    title: "Заказчик | Замовник | Customer"
+              - type: Table
+                name: ТаблицаУчастниковПроекта
+                value_table: УчастникиПроекта
+                height: 10
+                horizontal_stretch: true
+                columns:
+                  - name: Имя
+                    width: 25
+                  - name: Роль
+                    width: 20
+                  - name: Email
+                    width: 25
+                  - name: ДатаНачала
+                    width: 12
+                  - name: ДатаОкончания
+                    width: 12
+              - type: ButtonGroup
+                name: ГруппаКнопокУчастников
+                group_direction: Horizontal
+                elements:
+                  - type: Button
+                    name: КнопкаДобавитьУчастника
+                    command: ДобавитьУчастника
+                    width: 20
+                  - type: Button
+                    name: КнопкаУдалитьУчастника
+                    command: УдалитьУчастника
+                    width: 20
+      - type: UsualGroup
+        name: ГруппаКнопокСохранения
+        group_direction: Horizontal
+        representation: None
+        elements:
+          - type: Button
+            name: КнопкаСохранитьПроект
+            command: СохранитьПроект
+            width: 15
+          - type: Button
+            name: КнопкаОтменитьПроект
+            command: ОтменитьПроект
+            width: 15
+          - type: Button
+            name: КнопкаПросмотрЗадач
+            command: ПросмотрЗадач
+            width: 15
+          - type: Button
+            name: КнопкаИсторияИзменений
+            command: ИсторияИзменений
+            width: 15
+          - type: Button
+            name: КнопкаЭкспортПроекта
+            command: ЭкспортПроекта
+            width: 15
+
+  - name: КарточкаЗадачи
+    handlers_file: handlers_КарточкаЗадачи.bsl
+    default: false
+    width: 75
+    height: 30
+    window_opening_mode: LockOwnerWindow
+    synonym: "Карточка задачи | Картка задачі | Task Card"
+    form_attributes:
+      - name: РежимСоздания
+        type: boolean
+      - name: ИмяОсновнойФормы
+        type: string
+      # Атрибуты для редактирования данных задачи
+      - name: ЗадачаИД
+        type: string
+        length: 36
+        synonym: "ID задачи | ID задачі | Task ID"
+      - name: ПроектИД
+        type: string
+        length: 36
+        synonym: "ID проекта | ID проекту | Project ID"
+      - name: Название
+        type: string
+        synonym: "Название | Назва | Name"
+      - name: Описание
+        type: string
+        synonym: "Описание | Опис | Description"
+      - name: Статус
+        type: string
+        length: 50
+        synonym: "Статус | Статус | Status"
+      - name: Приоритет
+        type: string
+        length: 20
+        synonym: "Приоритет | Пріоритет | Priority"
+      - name: Тип
+        type: string
+        length: 50
+        synonym: "Тип | Тип | Type"
+      - name: Исполнитель
+        type: string
+        synonym: "Исполнитель | Виконавець | Assignee"
+      - name: Автор
+        type: string
+        synonym: "Автор | Автор | Author"
+      - name: ДатаСоздания
+        type: date
+        synonym: "Дата создания | Дата створення | Created Date"
+      - name: ДатаНачала
+        type: date
+        synonym: "Дата начала | Дата початку | Start Date"
+      - name: ДатаОкончания
+        type: date
+        synonym: "Дата окончания | Дата закінчення | Due Date"
+      - name: ФактическоеВремя
+        type: number
+        synonym: "Фактическое время (ч) | Фактичний час (год) | Actual Time (h)"
+      - name: ПлановоеВремя
+        type: number
+        synonym: "Плановое время (ч) | Плановий час (год) | Estimated Time (h)"
+      - name: ЗавершеноПроцентов
+        type: number
+        synonym: "Завершено (%) | Завершено (%) | Completed (%)"
+      - name: Теги
+        type: string
+        synonym: "Теги | Теги | Tags"
+    value_tables:
+      - name: КомментарииЗадачи
+        synonym: "Комментарии задачи | Коментарі задачі | Task Comments"
+        columns:
+          - name: Автор
+            type: string
+            synonym: "Автор | Автор | Author"
+          - name: Дата
+            type: date
+            synonym: "Дата | Дата | Date"
+          - name: Комментарий
+            type: string
+            synonym: "Комментарий | Коментар | Comment"
+          - name: Тип
+            type: string
+            length: 20
+            synonym: "Тип | Тип | Type"
+    commands:
+      - name: СохранитьЗадачу
+        handler: СохранитьЗадачу
+        picture: StdPicture.WriteAndClose
+        shortcut: Ctrl+S
+        representation: PictureAndText
+        title: "Сохранить | Зберегти | Save"
+      - name: ОтменитьЗадачу
+        handler: ОтменитьЗадачу
+        picture: StdPicture.Close
+        shortcut: Escape
+        representation: PictureAndText
+        title: "Отмена | Відміна | Cancel"
+      - name: ДобавитьКомментарий
+        handler: ДобавитьКомментарий
+        picture: StdPicture.CreateListItem
+        representation: PictureAndText
+        title: "Добавить комментарий | Додати коментар | Add Comment"
+      - name: УдалитьКомментарий
+        handler: УдалитьКомментарий
+        picture: StdPicture.MarkToDelete
+        representation: PictureAndText
+        title: "Удалить комментарий | Видалити коментар | Delete Comment"
+      - name: ИзменитьСтатус
+        handler: ИзменитьСтатус
+        picture: StdPicture.Change
+        representation: PictureAndText
+        title: "Изменить статус | Змінити статус | Change Status"
+      - name: НазначитьИсполнителя
+        handler: НазначитьИсполнителя
+        picture: StdPicture.User
+        representation: PictureAndText
+        title: "Назначить исполнителя | Призначити виконавця | Assign To"
+    events:
+      OnOpen: ПриОткрытии
+      OnCreateAtServer: ПриСозданииНаСервере
+    elements:
+      - type: LabelDecoration
+        name: ЗаголовокКарточкиЗадачи
+        font_style:
+          bold: true
+          size: 12
+        horizontal_stretch: true
+        title: "Карточка задачи | Картка задачі | Task Card"
+      - type: Pages
+        name: СекцииЗадачи
+        pages_representation: TabsOnTop
+        pages:
+          - name: СтраницаОсновнаяИнформацияЗадачи
+            title: "Основная информация | Основна інформація | Basic Information"
+            elements:
+              - type: InputField
+                name: ПолеЗадачаНазвание
+                attribute: Название
+                width: 60
+                title: "Название задачи | Назва задачі | Task Name"
+              - type: InputField
+                name: ПолеЗадачаОписание
+                attribute: Описание
+                title_location: Top
+                width: 60
+                height: 6
+                multiline: true
+                title: "Описание | Опис | Description"
+              - type: UsualGroup
+                name: ГруппаПараметровЗадачи
+                group_direction: Horizontal
+                representation: WeakSeparation
+                elements:
+                  - type: InputField
+                    name: ПолеЗадачаСтатус
+                    attribute: Статус
+                    width: 20
+                    title: "Статус | Статус | Status"
+                    choice_list:
+                      - {v: New, ru: Новая}
+                      - {v: InProgress, ru: В работе}
+                      - {v: Review, ru: На проверке}
+                      - {v: Done, ru: Выполнена}
+                      - {v: Closed, ru: Закрыта}
+                  - type: InputField
+                    name: ПолеЗадачаПриоритет
+                    attribute: Приоритет
+                    width: 15
+                    title: "Приоритет | Пріоритет | Priority"
+                    choice_list:
+                      - {v: Low, ru: Низкий}
+                      - {v: Medium, ru: Средний}
+                      - {v: High, ru: Высокий}
+                      - {v: Critical, ru: Критический}
+                  - type: InputField
+                    name: ПолеЗадачаТип
+                    attribute: Тип
+                    width: 20
+                    title: "Тип задачи | Тип задачі | Task Type"
+                    choice_list:
+                      - {v: Development, ru: Разработка}
+                      - {v: Testing, ru: Тестирование}
+                      - {v: Documentation, ru: Документация}
+                      - {v: Bugfix, ru: Исправление ошибки}
+                      - {v: Enhancement, ru: Улучшение}
+              - type: UsualGroup
+                name: ГруппаЛюдейЗадачи
+                group_direction: Horizontal
+                elements:
+                  - type: InputField
+                    name: ПолеЗадачаИсполнитель
+                    attribute: Исполнитель
+                    width: 25
+                    title: "Исполнитель | Виконавець | Assignee"
+                  - type: InputField
+                    name: ПолеЗадачаАвтор
+                    attribute: Автор
+                    width: 25
+                    read_only: true
+                    title: "Автор | Автор | Author"
+              - type: UsualGroup
+                name: ГруппаДатЗадачи
+                group_direction: Horizontal
+                elements:
+                  - type: InputField
+                    name: ПолеЗадачаДатаСоздания
+                    attribute: ДатаСоздания
+                    width: 18
+                    read_only: true
+                    title: "Дата создания | Дата створення | Created Date"
+                  - type: InputField
+                    name: ПолеЗадачаДатаНачала
+                    attribute: ДатаНачала
+                    width: 18
+                    title: "Дата начала | Дата початку | Start Date"
+                  - type: InputField
+                    name: ПолеЗадачаДатаОкончания
+                    attribute: ДатаОкончания
+                    width: 18
+                    title: "Срок выполнения | Термін виконання | Due Date"
+              - type: UsualGroup
+                name: ГруппаВремениЗадачи
+                group_direction: Horizontal
+                elements:
+                  - type: InputField
+                    name: ПолеЗадачаПлановоеВремя
+                    attribute: ПлановоеВремя
+                    width: 18
+                    title: "Плановое время (ч) | Плановий час (год) | Estimated Time (h)"
+                  - type: InputField
+                    name: ПолеЗадачаФактическоеВремя
+                    attribute: ФактическоеВремя
+                    width: 18
+                    read_only: true
+                    title: "Фактическое время (ч) | Фактичний час (год) | Actual Time (h)"
+                  - type: InputField
+                    name: ПолеЗадачаЗавершеноПроцентов
+                    attribute: ЗавершеноПроцентов
+                    width: 18
+                    title: "Завершено (%) | Завершено (%) | Completed (%)"
+              - type: InputField
+                name: ПолеЗадачаТеги
+                attribute: Теги
+                width: 60
+                input_hint: Введите теги через запятую
+                title: "Теги | Теги | Tags"
+          - name: СтраницаКомментарии
+            title: "Комментарии | Коментарі | Comments"
+            elements:
+              - type: Table
+                name: ТаблицаКомментариев
+                value_table: КомментарииЗадачи
+                height: 12
+                horizontal_stretch: true
+                columns:
+                  - name: Автор
+                    width: 20
+                  - name: Дата
+                    width: 15
+                  - name: Тип
+                    width: 15
+                  - name: Комментарий
+                    width: 40
+                events:
+                  Selection: КомментарииВыбор
+              - type: ButtonGroup
+                name: ГруппаКнопокКомментариев
+                group_direction: Horizontal
+                elements:
+                  - type: Button
+                    name: КнопкаДобавитьКомментарий
+                    command: ДобавитьКомментарий
+                    width: 20
+                  - type: Button
+                    name: КнопкаУдалитьКомментарий
+                    command: УдалитьКомментарий
+                    width: 20
+      - type: UsualGroup
+        name: ГруппаКнопокЗадачи
+        group_direction: Horizontal
+        representation: None
+        elements:
+          - type: Button
+            name: КнопкаСохранитьЗадачу
+            command: СохранитьЗадачу
+            width: 15
+          - type: Button
+            name: КнопкаОтменитьЗадачу
+            command: ОтменитьЗадачу
+            width: 15
+          - type: Button
+            name: КнопкаИзменитьСтатус
+            command: ИзменитьСтатус
+            width: 15
+          - type: Button
+            name: КнопкаНазначитьИсполнителя
+            command: НазначитьИсполнителя
+            width: 15
+
+  - name: ФормаОтчетов
+    handlers_file: handlers_ФормаОтчетов.bsl
+    default: false
+    width: 100
+    height: 40
+    synonym: "Отчеты | Звіти | Reports"
+    form_attributes:
+      - name: ИмяОсновнойФормы
+        type: string
+    value_tables:
+      - name: ОтчетПоПроектам
+        synonym: "Отчет по проектам | Звіт по проектах | Project Report"
+        columns:
+          - name: Проект
+            type: string
+            synonym: "Проект | Проект | Project"
+          - name: Статус
+            type: string
+            synonym: "Статус | Статус | Status"
+          - name: ВсегоЗадач
+            type: number
+            synonym: "Всего задач | Всього задач | Total Tasks"
+          - name: Выполнено
+            type: number
+            synonym: "Выполнено | Виконано | Completed"
+          - name: ВРаботе
+            type: number
+            synonym: "В работе | У роботі | In Progress"
+          - name: Просрочено
+            type: number
+            synonym: "Просрочено | Прострочено | Overdue"
+          - name: Прогресс
+            type: number
+            synonym: "Прогресс (%) | Прогрес (%) | Progress (%)"
+          - name: Бюджет
+            type: number
+            synonym: "Бюджет | Бюджет | Budget"
+          - name: Затраты
+            type: number
+            synonym: "Затраты | Витрати | Cost"
+          - name: Отклонение
+            type: number
+            synonym: "Отклонение | Відхилення | Variance"
+      - name: ОтчетПоЗадачам
+        synonym: "Отчет по задачам | Звіт по задачах | Task Report"
+        columns:
+          - name: Проект
+            type: string
+            synonym: "Проект | Проект | Project"
+          - name: Задача
+            type: string
+            synonym: "Задача | Задача | Task"
+          - name: Исполнитель
+            type: string
+            synonym: "Исполнитель | Виконавець | Assignee"
+          - name: Статус
+            type: string
+            synonym: "Статус | Статус | Status"
+          - name: Приоритет
+            type: string
+            synonym: "Приоритет | Пріоритет | Priority"
+          - name: ДатаНачала
+            type: date
+            synonym: "Дата начала | Дата початку | Start Date"
+          - name: ДатаОкончания
+            type: date
+            synonym: "Срок | Термін | Due Date"
+          - name: Прогресс
+            type: number
+            synonym: "Прогресс (%) | Прогрес (%) | Progress (%)"
+      - name: ОтчетПоРесурсам
+        synonym: "Отчет по ресурсам | Звіт по ресурсах | Resource Report"
+        columns:
+          - name: Ресурс
+            type: string
+            synonym: "Ресурс | Ресурс | Resource"
+          - name: Тип
+            type: string
+            synonym: "Тип | Тип | Type"
+          - name: КоличествоПроектов
+            type: number
+            synonym: "Количество проектов | Кількість проектів | Project Count"
+          - name: КоличествоЗадач
+            type: number
+            synonym: "Количество задач | Кількість задач | Task Count"
+          - name: ЗагрузкаЧасов
+            type: number
+            synonym: "Загрузка (часов) | Завантаження (годин) | Workload (hours)"
+          - name: Доступность
+            type: number
+            synonym: "Доступность (%) | Доступність (%) | Availability (%)"
+          - name: Стоимость
+            type: number
+            synonym: "Стоимость | Вартість | Cost"
+      - name: ОтчетПоВремени
+        synonym: "Отчет по времени | Звіт по часу | Time Report"
+        columns:
+          - name: Период
+            type: string
+            synonym: "Период | Період | Period"
+          - name: Проект
+            type: string
+            synonym: "Проект | Проект | Project"
+          - name: Исполнитель
+            type: string
+            synonym: "Исполнитель | Виконавець | Assignee"
+          - name: ПлановоеВремя
+            type: number
+            synonym: "Плановое время | Плановий час | Planned Time"
+          - name: ФактическоеВремя
+            type: number
+            synonym: "Фактическое время | Фактичний час | Actual Time"
+          - name: Отклонение
+            type: number
+            synonym: "Отклонение | Відхилення | Variance"
+          - name: ОтклонениеПроцент
+            type: number
+            synonym: "Отклонение (%) | Відхилення (%) | Variance (%)"
+    form_attributes:
+      - name: ДокументОтчета
+        type: spreadsheet_document
+        synonym: "Документ отчета | Документ звіту | Report Document"
+    commands:
+      - name: СформироватьОтчетПроектов
+        handler: СформироватьОтчетПроектов
+        picture: StdPicture.Report
+        representation: PictureAndText
+        title: "Отчет по проектам | Звіт по проектах | Project Report"
+      - name: СформироватьОтчетЗадач
+        handler: СформироватьОтчетЗадач
+        picture: StdPicture.Report
+        representation: PictureAndText
+        title: "Отчет по задачам | Звіт по задачах | Task Report"
+      - name: СформироватьОтчетРесурсов
+        handler: СформироватьОтчетРесурсов
+        picture: StdPicture.Report
+        representation: PictureAndText
+        title: "Отчет по ресурсам | Звіт по ресурсах | Resource Report"
+      - name: СформироватьОтчетВремени
+        handler: СформироватьОтчетВремени
+        picture: StdPicture.Report
+        representation: PictureAndText
+        title: "Отчет по времени | Звіт по часу | Time Report"
+      - name: ЭкспортироватьОтчет
+        handler: ЭкспортироватьОтчет
+        representation: Text
+        title: "Экспортировать отчет | Експортувати звіт | Export Report"
+      - name: ПечатьОтчета
+        handler: ПечатьОтчета
+        picture: StdPicture.Print
+        representation: PictureAndText
+        title: "Печать отчета | Друк звіту | Print Report"
+    events:
+      OnOpen: ПриОткрытии
+      OnCreateAtServer: ПриСозданииНаСервере
+    elements:
+      - type: LabelDecoration
+        name: ЗаголовокОтчетов
+        font_style:
+          bold: true
+          size: 12
+        horizontal_stretch: true
+        title: "Отчеты и аналитика - Комплексный анализ проектов, задач и ресурсов | Звіти та аналітика - Комплексний аналіз проектів, задач та ресурсів | Reports and Analytics - Comprehensive analysis of projects, tasks and resources"
+      - type: UsualGroup
+        name: ГруппаПараметровОтчета
+        representation: WeakSeparation
+        behavior: Collapsible
+        show_title: true
+        title: "Параметры отчета | Параметри звіту | Report Parameters"
+        elements:
+          - type: UsualGroup
+            name: ГруппаДатОтчета
+            group_direction: Horizontal
+            elements:
+              - type: InputField
+                name: ПолеДатаНачалаОтчета
+                attribute: ФильтрДатаНачала
+                width: 20
+                title: "Дата начала | Дата початку | Start Date"
+              - type: InputField
+                name: ПолеДатаОкончанияОтчета
+                attribute: ФильтрДатаОкончания
+                width: 20
+                title: "Дата окончания | Дата закінчення | End Date"
+              - type: InputField
+                name: ПолеПроектДляОтчета
+                attribute: ФильтрПроект
+                width: 25
+                input_hint: Все проекты
+                title: "Проект | Проект | Project"
+              - type: InputField
+                name: ПолеИсполнительДляОтчета
+                attribute: ФильтрИсполнитель
+                width: 25
+                input_hint: Все исполнители
+                title: "Исполнитель | Виконавець | Assignee"
+          - type: UsualGroup
+            name: ГруппаОпцийОтчета
+            group_direction: Horizontal
+            elements:
+              - type: CheckBoxField
+                name: ФлажокПоказыватьЗакрытыеОтчет
+                attribute: ПоказыватьЗакрытые
+                title_location: Right
+                title: "Показывать закрытые | Показувати закриті | Show Closed"
+              - type: CheckBoxField
+                name: ФлажокПоказыватьАрхивныеОтчет
+                attribute: ПоказыватьАрхивные
+                title_location: Right
+                title: "Показывать архивные | Показувати архівні | Show Archived"
+      - type: Pages
+        name: СтраницыОтчетов
+        pages_representation: TabsOnTop
+        pages:
+          - name: СтраницаОтчетПроектов
+            title: "По проектам | По проектах | By Projects"
+            elements:
+              - type: Table
+                name: ТаблицаОтчетПроектов
+                value_table: ОтчетПоПроектам
+                height: 20
+                horizontal_stretch: true
+                columns:
+                  - name: Проект
+                    width: 25
+                  - name: Статус
+                    width: 15
+                  - name: ВсегоЗадач
+                    width: 10
+                  - name: Выполнено
+                    width: 10
+                  - name: ВРаботе
+                    width: 10
+                  - name: Просрочено
+                    width: 10
+                  - name: Прогресс
+                    width: 10
+                  - name: Бюджет
+                    width: 12
+                  - name: Затраты
+                    width: 12
+                  - name: Отклонение
+                    width: 12
+              - type: Button
+                name: КнопкаСформироватьОтчетПроектов
+                command: СформироватьОтчетПроектов
+                width: 20
+          - name: СтраницаОтчетЗадач
+            title: "По задачам | По задачах | By Tasks"
+            elements:
+              - type: Table
+                name: ТаблицаОтчетЗадач
+                value_table: ОтчетПоЗадачам
+                height: 20
+                horizontal_stretch: true
+                columns:
+                  - name: Проект
+                    width: 20
+                  - name: Задача
+                    width: 30
+                  - name: Исполнитель
+                    width: 20
+                  - name: Статус
+                    width: 15
+                  - name: Приоритет
+                    width: 12
+                  - name: ДатаНачала
+                    width: 12
+                  - name: ДатаОкончания
+                    width: 12
+                  - name: Прогресс
+                    width: 10
+              - type: Button
+                name: КнопкаСформироватьОтчетЗадач
+                command: СформироватьОтчетЗадач
+                width: 20
+          - name: СтраницаОтчетРесурсов
+            title: "По ресурсам | По ресурсах | By Resources"
+            elements:
+              - type: Table
+                name: ТаблицаОтчетРесурсов
+                value_table: ОтчетПоРесурсам
+                height: 20
+                horizontal_stretch: true
+                columns:
+                  - name: Ресурс
+                    width: 25
+                  - name: Тип
+                    width: 15
+                  - name: КоличествоПроектов
+                    width: 12
+                  - name: КоличествоЗадач
+                    width: 12
+                  - name: ЗагрузкаЧасов
+                    width: 12
+                  - name: Доступность
+                    width: 12
+                  - name: Стоимость
+                    width: 15
+              - type: Button
+                name: КнопкаСформироватьОтчетРесурсов
+                command: СформироватьОтчетРесурсов
+                width: 20
+          - name: СтраницаОтчетВремени
+            title: "По времени | По часу | By Time"
+            elements:
+              - type: Table
+                name: ТаблицаОтчетВремени
+                value_table: ОтчетПоВремени
+                height: 20
+                horizontal_stretch: true
+                columns:
+                  - name: Период
+                    width: 15
+                  - name: Проект
+                    width: 25
+                  - name: Исполнитель
+                    width: 20
+                  - name: ПлановоеВремя
+                    width: 12
+                  - name: ФактическоеВремя
+                    width: 12
+                  - name: Отклонение
+                    width: 12
+                  - name: ОтклонениеПроцент
+                    width: 12
+              - type: Button
+                name: КнопкаСформироватьОтчетВремени
+                command: СформироватьОтчетВремени
+                width: 20
+          - name: СтраницаТабличныйДокумент
+            title: "Табличный документ | Табличний документ | Spreadsheet Document"
+            elements:
+              - type: SpreadSheetDocumentField
+                name: ПолеДокументаОтчета
+                form_attribute: ДокументОтчета
+                horizontal_stretch: true
+                height: 22
+                events:
+                  DetailProcessing: ДокументОтчетаОбработкаРасшифровки
+      - type: UsualGroup
+        name: ГруппаКнопокОтчетов
+        group_direction: Horizontal
+        representation: None
+        elements:
+          - type: Button
+            name: КнопкаЭкспортироватьОтчет
+            command: ЭкспортироватьОтчет
+            width: 18
+          - type: Button
+            name: КнопкаПечатьОтчета
+            command: ПечатьОтчета
+            width: 18
+
+  - name: ФормаНастроек
+    handlers_file: handlers_ФормаНастроек.bsl
+    default: false
+    width: 70
+    height: 35
+    window_opening_mode: LockOwnerWindow
+    synonym: "Настройки | Налаштування | Settings"
+    form_attributes:
+      - name: ИмяОсновнойФормы
+        type: string
+    commands:
+      - name: СохранитьНастройки
+        handler: СохранитьНастройки
+        picture: StdPicture.WriteAndClose
+        shortcut: Ctrl+S
+        representation: PictureAndText
+        title: "Сохранить | Зберегти | Save"
+      - name: ОтменитьНастройки
+        handler: ОтменитьНастройки
+        picture: StdPicture.Close
+        shortcut: Escape
+        representation: PictureAndText
+        title: "Отмена | Відміна | Cancel"
+      - name: СброситьПоУмолчанию
+        handler: СброситьПоУмолчанию
+        picture: StdPicture.Refresh
+        representation: PictureAndText
+        title: "Сбросить по умолчанию | Скинути за замовчуванням | Reset to Default"
+    events:
+      OnOpen: ПриОткрытии
+      OnCreateAtServer: ПриСозданииНаСервере
+    elements:
+      - type: LabelDecoration
+        name: ЗаголовокНастроек
+        font_style:
+          bold: true
+          size: 12
+        horizontal_stretch: true
+        title: "Настройки системы управления проектами | Налаштування системи управління проектами | Project Management System Settings"
+      - type: Pages
+        name: СекцииНастроек
+        pages_representation: TabsOnTop
+        pages:
+          - name: СтраницаОбщиеНастройки
+            title: "Общие | Загальні | General"
+            elements:
+              - type: UsualGroup
+                name: ГруппаОтображения
+                show_title: true
+                representation: WeakSeparation
+                title: "Отображение | Відображення | Display"
+                elements:
+                  - type: InputField
+                    name: ПолеРежимОтображения
+                    attribute: РежимОтображения
+                    width: 25
+                    title: "Режим отображения | Режим відображення | Display Mode"
+                    choice_list:
+                      - {v: Table, ru: Таблица}
+                      - {v: Cards, ru: Карточки}
+                      - {v: Kanban, ru: Канбан-доска}
+                      - {v: Gantt, ru: Диаграмма Ганта}
+                  - type: InputField
+                    name: ПолеЦветовойРежим
+                    attribute: ЦветовойРежим
+                    width: 25
+                    title: "Цветовой режим | Кольоровий режим | Color Mode"
+                    choice_list:
+                      - {v: Light, ru: Светлая тема}
+                      - {v: Dark, ru: Темная тема}
+                      - {v: Blue, ru: Синяя тема}
+                      - {v: Green, ru: Зеленая тема}
+                  - type: InputField
+                    name: ПолеРазмерШрифта
+                    attribute: РазмерШрифта
+                    width: 15
+                    title: "Размер шрифта | Розмір шрифту | Font Size"
+              - type: UsualGroup
+                name: ГруппаАвтообновления
+                show_title: true
+                representation: WeakSeparation
+                title: "Автообновление | Автооновлення | Auto-refresh"
+                elements:
+                  - type: InputField
+                    name: ПолеАвтообновлениеСекунд
+                    attribute: АвтообновлениеСекунд
+                    width: 20
+                    title: "Интервал обновления (сек) | Інтервал оновлення (сек) | Refresh Interval (sec)"
+                  - type: LabelDecoration
+                    name: ПодсказкаАвтообновление
+                    title: "Рекомендуемое значение: 30-60 секунд. 0 - отключить автообновление | Рекомендоване значення: 30-60 секунд. 0 - вимкнути автооновлення | Recommended value: 30-60 seconds. 0 - disable auto-refresh"
+          - name: СтраницаФильтрыПоУмолчанию
+            title: "Фильтры по умолчанию | Фільтри за замовчуванням | Default Filters"
+            elements:
+              - type: UsualGroup
+                name: ГруппаФильтровПоУмолчанию
+                show_title: false
+                elements:
+                  - type: CheckBoxField
+                    name: ФлажокПоказыватьЗакрытыеНастройка
+                    attribute: ПоказыватьЗакрытые
+                    title_location: Right
+                    title: "Показывать закрытые проекты и задачи | Показувати закриті проекти та задачі | Show closed projects and tasks"
+                  - type: CheckBoxField
+                    name: ФлажокПоказыватьАрхивныеНастройка
+                    attribute: ПоказыватьАрхивные
+                    title_location: Right
+                    title: "Показывать архивные записи | Показувати архівні записи | Show archived records"
+                  - type: CheckBoxField
+                    name: ФлажокГруппировкаПоПроектамНастройка
+                    attribute: ГруппировкаПоПроектам
+                    title_location: Right
+                    title: "Группировать задачи по проектам | Групувати задачі по проектах | Group tasks by projects"
+              - type: LabelDecoration
+                name: РазделительФильтров
+                title: "―――――――――――――――――――――――――――――――― | ―――――――――――――――――――――――――――――――― | ――――――――――――――――――――――――――――――――"
+              - type: InputField
+                name: ПолеФильтрСтатусПоУмолчанию
+                attribute: ФильтрСтатус
+                width: 25
+                title: "Статус по умолчанию | Статус за замовчуванням | Default Status"
+                choice_list:
+                  - {v: All, ru: <Все>}
+                  - {v: New, ru: Новая}
+                  - {v: InProgress, ru: В работе}
+                  - {v: Done, ru: Выполнена}
+              - type: InputField
+                name: ПолеФильтрПриоритетПоУмолчанию
+                attribute: ФильтрПриоритет
+                width: 25
+                title: "Приоритет по умолчанию | Пріоритет за замовчуванням | Default Priority"
+                choice_list:
+                  - {v: All, ru: <Все>}
+                  - {v: Low, ru: Низкий}
+                  - {v: Medium, ru: Средний}
+                  - {v: High, ru: Высокий}
+          - name: СтраницаЭкспортИмпорт
+            title: "Экспорт/Импорт | Експорт/Імпорт | Export/Import"
+            elements:
+              - type: UsualGroup
+                name: ГруппаНастроекЭкспорта
+                show_title: true
+                representation: WeakSeparation
+                title: "Настройки экспорта | Налаштування експорту | Export Settings"
+                elements:
+                  - type: InputField
+                    name: ПолеПутьЭкспорта
+                    attribute: ПутьЭкспорта
+                    width: 50
+                    title: "Путь экспорта по умолчанию | Шлях експорту за замовчуванням | Default Export Path"
+                  - type: InputField
+                    name: ПолеФорматЭкспорта
+                    attribute: ФорматЭкспорта
+                    width: 20
+                    title: "Формат экспорта | Формат експорту | Export Format"
+                    choice_list:
+                      - {v: XML, ru: XML}
+                      - {v: JSON, ru: JSON}
+                      - {v: CSV, ru: CSV}
+                      - {v: Excel, ru: Excel}
+              - type: LabelDecoration
+                name: ИнформацияОбЭкспорте
+                title: "Экспорт позволяет выгружать данные проектов, задач и ресурсов в различные форматы для обработки в других системах | Експорт дозволяє вивантажувати дані проектів, задач та ресурсів у різні формати для обробки в інших системах | Export allows you to unload project, task and resource data to various formats for processing in other systems"
+      - type: UsualGroup
+        name: ГруппаКнопокНастроек
+        group_direction: Horizontal
+        representation: None
+        elements:
+          - type: Button
+            name: КнопкаСохранитьНастройки
+            command: СохранитьНастройки
+            width: 18
+          - type: Button
+            name: КнопкаОтменитьНастройки
+            command: ОтменитьНастройки
+            width: 18
+          - type: Button
+            name: КнопкаСброситьПоУмолчанию
+            command: СброситьПоУмолчанию
+            width: 18
