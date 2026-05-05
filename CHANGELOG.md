@@ -18,6 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Follows same pattern as `open_button`, `clear_button`, `drop_list_button`, `spin_button`
   - Use case: file selection dialogs, custom choice handlers via `StartChoice` event
 
+### Fixed
+- **Form Command English Localization** - `<Command><Title>` and `<ToolTip>` now render `en` language item
+  - `Command.title_en` / `Command.tooltip_en` were correctly parsed from YAML (`"ru | uk | en"` syntax via `normalize_multilang`) and stored on the model, but `generator.py` dropped both fields when building `cmd_data` dict for the Jinja2 template
+  - Template guard `{%- if cmd.title_en %}` always evaluated False because the dict had no `title_en` key
+  - Result: english-language UI showed russian button labels (button text comes from `Command` via `CommandName` reference)
+  - Form attributes/elements were not affected (different code path)
+  - No YAML changes needed — existing 3-language `title:` definitions for commands now produce correct trilingual XML
+
 ## [2.76.0] - 2026-03-04
 
 ### Added

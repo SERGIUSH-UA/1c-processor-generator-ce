@@ -1160,9 +1160,11 @@ class ProcessorGenerator:
                         "name": cmd.name,
                         "title_ru": cmd.title_ru,
                         "title_uk": cmd.title_uk,
+                        "title_en": cmd.title_en,
                         "action": cmd.action,
                         "tooltip_ru": cmd.tooltip_ru,
                         "tooltip_uk": cmd.tooltip_uk,
+                        "tooltip_en": cmd.tooltip_en,
                         "picture": cmd.picture,
                         "shortcut": cmd.shortcut,
                     }
