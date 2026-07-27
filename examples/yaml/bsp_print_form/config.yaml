@@ -6,7 +6,16 @@
 # The generated processing will include:
 # - СведенияОВнешнейОбработке() - BSP registration function
 # - Печать() - Print handler procedure
-# - ПечатьСчетНаОплату() - Stub function for print logic
+# - ПечатьСчетНаОплату() - your implementation from handlers.bsl
+#
+# Generate:
+#   python -m 1c_processor_generator yaml \
+#     --config config.yaml \
+#     --handlers-file handlers.bsl \
+#     --output output
+#
+# Without --handlers-file the generator emits a TODO stub instead and warns
+# about it: the .epf would compile and open, but print an empty document.
 #
 # PRO License Required!
 
@@ -37,11 +46,9 @@ bsp:
       show_notification: false
       template_name: ПФ_MXL_СчетНаОплату
 
-    - id: СчетНаОплатуWord
-      title: "Счет на оплату (Word) | Рахунок на оплату (Word) | Invoice (Word)"
-      usage: server_method
-      show_notification: false
-      template_name: ПФ_DOC_СчетНаОплату
+    # Note: Word/ActiveDocument output is NOT supported by the generated Печать()
+    # procedure - every command handler must return a ТабличныйДокумент.
+    # See docs/LLM_BSP_PRINT_FORMS.md, Pattern 4.
 
 # Note: Templates (макети) are optional - you can add them later
 # templates:

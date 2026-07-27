@@ -90,6 +90,9 @@ class BSLSplitter:
         # Завантажуємо вміст файлу
         self.content = self._load_file()
 
+        # Чи був витягнутий регіон #Область МодульОбъекта (v2.78.0+)
+        self.object_module_extracted = False
+
     def _load_file(self) -> str:
         """
         Завантажує вміст BSL файлу
@@ -181,6 +184,7 @@ class BSLSplitter:
 
         # Видаляємо регіон з content щоб не заважав парсингу процедур
         self.content = self.content[:match.start()] + self.content[match.end():]
+        self.object_module_extracted = True
 
         print(f"  ✓ Витягнуто регіон МодульОбъекта ({len(object_module_code)} символів)")
 
@@ -303,7 +307,9 @@ class BSLSplitter:
 
             print(f"  ✓ Витягнуто процедуру: {proc_name}")
 
-        if not procedures:
+        # Порожній результат нормальний, якщо весь код лежить у регіоні
+        # МодульОбъекта (напр. BSP print_form) - тоді це не привід попереджати
+        if not procedures and not self.object_module_extracted:
             print(f"⚠️  Не знайдено процедур у файлі {self.bsl_file_path}")
 
         return procedures

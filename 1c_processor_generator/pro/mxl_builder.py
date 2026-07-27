@@ -40,6 +40,29 @@ NS_MAP = {
 }
 
 
+def _normalize_color(value: Optional[str]) -> Optional[str]:
+    """
+    Normalize a hex color to MXL form '#RRGGBB' (v2.78.0+)
+
+    Accepts 'RRGGBB', '#RRGGBB' or ARGB 'AARRGGBB'.
+    """
+    if not value:
+        return None
+
+    text = str(value).strip().lstrip("#")
+    if len(text) == 8:      # ARGB from Excel
+        text = text[-6:]
+    if len(text) != 6:
+        return None
+
+    try:
+        int(text, 16)
+    except ValueError:
+        return None
+
+    return f"#{text.upper()}"
+
+
 @dataclass
 class MXLFont:
     """Font definition for MXL."""
@@ -69,16 +92,53 @@ class MXLFormat:
     bottom_border: Optional[int] = None
     fill_type: Optional[str] = None             # "Parameter" for fill cells
     text_placement: Optional[str] = None        # "Cut", "Wrap"
-    number_format: Optional[str] = None         # Number format string
+    number_format: Optional[str] = None         # Number format string (1C syntax)
+
+    # Colors as #RRGGBB, v2.78.0+
+    text_color: Optional[str] = None
+    back_color: Optional[str] = None
+    border_color: Optional[str] = None
+    indent: Optional[int] = None
 
     def to_key(self) -> tuple:
-        """Return hashable key for format registry."""
+        """
+        Return hashable key for format registry.
+
+        Every field must be part of the key: a field left out makes two
+        visually different formats collapse into one registry entry.
+        """
         return (
             self.width, self.height, self.font_index,
             self.horizontal_alignment, self.vertical_alignment,
             self.left_border, self.right_border, self.top_border, self.bottom_border,
-            self.fill_type, self.text_placement, self.number_format
+            self.fill_type, self.text_placement, self.number_format,
+            self.text_color, self.back_color, self.border_color, self.indent
         )
+
+
+@dataclass
+class MXLDrawing:
+    """
+    Floating picture anchored to cells (v2.78.0+).
+
+    picture_index is the 0-based index in the picture registry. In XML it is
+    emitted as 1-based: 1C treats <pictureIndex>0</pictureIndex> as "no picture"
+    and then discards the registry entry entirely.
+    """
+    picture_index: int
+    begin_row: int
+    begin_row_offset: int
+    end_row: int
+    end_row_offset: int
+    begin_column: int
+    begin_column_offset: int
+    end_column: int
+    end_column_offset: int
+    drawing_id: int = 0
+    format_index: int = 0
+    z_order: int = 1
+    picture_size: str = "Proportionally"   # Proportionally, Stretch, RealSize
+    auto_size: bool = False
 
 
 @dataclass
@@ -160,6 +220,8 @@ class MXLBuilder:
         self._rows: List[MXLRow] = []
         self._merges: List[MXLMerge] = []
         self._named_areas: List[MXLNamedArea] = []
+        self._drawings: List[MXLDrawing] = []
+        self._pictures: List[bytes] = []
 
         # Track dimensions
         self._max_row = 0
@@ -198,6 +260,32 @@ class MXLBuilder:
         if key not in self._formats:
             self._formats[key] = len(self._formats)
         return self._formats[key]
+
+    def _register_line(self, style: str = "Solid", width: int = 1) -> int:
+        """
+        Register a border line style and return its index (v2.78.0+)
+
+        Previously every border reused line 0 (solid, width 1), so thick,
+        double and dashed Excel borders all rendered identically.
+        """
+        entry = {"width": width, "style": style}
+        for index, existing in enumerate(self._lines):
+            if existing == entry:
+                return index
+        self._lines.append(entry)
+        return len(self._lines) - 1
+
+    def add_picture(self, data: bytes) -> int:
+        """Register picture bytes, return its index (v2.78.0+)."""
+        self._pictures.append(data)
+        return len(self._pictures) - 1
+
+    def add_drawing(self, drawing: MXLDrawing) -> MXLDrawing:
+        """Add a floating picture anchored to cells (v2.78.0+)."""
+        if not drawing.drawing_id:
+            drawing.drawing_id = len(self._drawings) + 1
+        self._drawings.append(drawing)
+        return drawing
 
     def add_language_settings(self, languages: List[str]):
         """
@@ -277,7 +365,12 @@ class MXLBuilder:
         vertical_alignment: str = "Top",
         has_parameter: bool = False,
         wrap_text: bool = False,
-        borders: Optional[Dict[str, bool]] = None
+        borders: Optional[Dict[str, Any]] = None,
+        font_color: Optional[str] = None,
+        background_color: Optional[str] = None,
+        border_color: Optional[str] = None,
+        number_format: Optional[str] = None,
+        indent: int = 0
     ) -> MXLCell:
         """
         Create a cell with formatting.
@@ -297,7 +390,13 @@ class MXLBuilder:
             vertical_alignment: Top, Center, Bottom
             has_parameter: True if cell contains {parameter}
             wrap_text: Enable text wrapping
-            borders: Dict with left, right, top, bottom keys
+            borders: Dict with left/right/top/bottom keys. Values may be a bool
+                (legacy: default solid line) or a dict {"style": ..., "width": ...}
+            font_color: Text color as hex RRGGBB (v2.78.0+)
+            background_color: Fill color as hex RRGGBB (v2.78.0+)
+            border_color: Border color as hex RRGGBB (v2.78.0+)
+            number_format: 1C format string, e.g. "ЧЦ=15; ЧДЦ=2" (v2.78.0+)
+            indent: Text indent (v2.78.0+)
 
         Returns:
             MXLCell object
@@ -313,12 +412,22 @@ class MXLBuilder:
         )
         font_index = self._register_font(font)
 
-        # Prepare borders
+        # Prepare borders - each side gets its own registered line style
         border_indices = {}
         if borders:
             for side in ["left", "right", "top", "bottom"]:
-                if borders.get(side):
-                    border_indices[f"{side}_border"] = 0  # Use default line
+                spec = borders.get(side)
+                if not spec:
+                    continue
+                if isinstance(spec, dict):
+                    line_index = self._register_line(
+                        style=spec.get("style", "Solid"),
+                        width=spec.get("width", 1),
+                    )
+                else:
+                    # Legacy bool: default solid line
+                    line_index = self._register_line()
+                border_indices[f"{side}_border"] = line_index
 
         # Register format
         fmt = MXLFormat(
@@ -327,6 +436,13 @@ class MXLBuilder:
             vertical_alignment=vertical_alignment if vertical_alignment != "Top" else None,
             fill_type="Parameter" if has_parameter or parameter else None,
             text_placement="Wrap" if wrap_text else None,
+            # Black is the 1C default; Excel reports it for ordinary text, and
+            # emitting it everywhere would multiply format entries for nothing
+            text_color=_normalize_color(font_color) if _normalize_color(font_color) != "#000000" else None,
+            back_color=_normalize_color(background_color),
+            border_color=_normalize_color(border_color) if border_indices else None,
+            number_format=number_format,
+            indent=indent or None,
             **border_indices
         )
         format_index = self._register_format(fmt)
@@ -411,6 +527,9 @@ class MXLBuilder:
         # Add rows
         self._build_rows(root)
 
+        # Add drawings (pictures anchored to cells) - must follow rowsItem
+        self._build_drawings(root)
+
         # Add template mode and dimensions
         ET.SubElement(root, "templateMode").text = "true"
         ET.SubElement(root, "defaultFormatIndex").text = "0"
@@ -431,6 +550,9 @@ class MXLBuilder:
 
         # Add formats
         self._build_formats(root)
+
+        # Add picture registry - goes last, after formats
+        self._build_pictures(root)
 
         # Generate XML string
         return self._to_xml_string(root)
@@ -535,6 +657,40 @@ class MXLBuilder:
             if area.columns_id:
                 ET.SubElement(area_elem, "columnsID").text = area.columns_id
 
+    def _build_drawings(self, root: ET.Element):
+        """Build drawing elements for anchored pictures (v2.78.0+)."""
+        for drawing in self._drawings:
+            elem = ET.SubElement(root, "drawing")
+
+            ET.SubElement(elem, "drawingType").text = "Picture"
+            ET.SubElement(elem, "id").text = str(drawing.drawing_id)
+            ET.SubElement(elem, "formatIndex").text = str(drawing.format_index)
+            ET.SubElement(elem, "beginRow").text = str(drawing.begin_row)
+            ET.SubElement(elem, "beginRowOffset").text = str(drawing.begin_row_offset)
+            ET.SubElement(elem, "endRow").text = str(drawing.end_row)
+            ET.SubElement(elem, "endRowOffset").text = str(drawing.end_row_offset)
+            ET.SubElement(elem, "beginColumn").text = str(drawing.begin_column)
+            ET.SubElement(elem, "beginColumnOffset").text = str(drawing.begin_column_offset)
+            ET.SubElement(elem, "endColumn").text = str(drawing.end_column)
+            ET.SubElement(elem, "endColumnOffset").text = str(drawing.end_column_offset)
+            ET.SubElement(elem, "autoSize").text = "true" if drawing.auto_size else "false"
+            ET.SubElement(elem, "pictureSize").text = drawing.picture_size
+            ET.SubElement(elem, "zOrder").text = str(drawing.z_order)
+            # 1-based reference into the 0-based picture registry (see MXLDrawing)
+            ET.SubElement(elem, "pictureIndex").text = str(drawing.picture_index + 1)
+
+    def _build_pictures(self, root: ET.Element):
+        """Build the picture registry referenced by drawings (v2.78.0+)."""
+        import base64
+
+        for index, data in enumerate(self._pictures):
+            wrapper = ET.SubElement(root, "picture")
+            ET.SubElement(wrapper, "index").text = str(index)
+
+            payload = ET.SubElement(wrapper, "picture")
+            payload.set("t", "false")
+            payload.text = base64.b64encode(data).decode("ascii")
+
     def _build_lines(self, root: ET.Element):
         """Build line elements for borders."""
         for line in self._lines:
@@ -574,7 +730,8 @@ class MXLBuilder:
         for format_key, _ in sorted_formats:
             (width, height, font_index, h_align, v_align,
              left_b, right_b, top_b, bottom_b,
-             fill_type, text_placement, number_format) = format_key
+             fill_type, text_placement, number_format,
+             text_color, back_color, border_color, indent) = format_key
 
             fmt_elem = ET.SubElement(root, "format")
 
@@ -601,6 +758,9 @@ class MXLBuilder:
             if bottom_b is not None:
                 ET.SubElement(fmt_elem, "bottomBorder").text = str(bottom_b)
 
+            if border_color:
+                ET.SubElement(fmt_elem, "borderColor").text = border_color
+
             if h_align:
                 ET.SubElement(fmt_elem, "horizontalAlignment").text = h_align
 
@@ -610,8 +770,25 @@ class MXLBuilder:
             if text_placement:
                 ET.SubElement(fmt_elem, "textPlacement").text = text_placement
 
+            if text_color:
+                ET.SubElement(fmt_elem, "textColor").text = text_color
+
+            if back_color:
+                ET.SubElement(fmt_elem, "backColor").text = back_color
+
             if fill_type:
                 ET.SubElement(fmt_elem, "fillType").text = fill_type
+
+            if indent:
+                ET.SubElement(fmt_elem, "indent").text = str(indent)
+
+            if number_format:
+                # Number format is a localized nested <format> element
+                nested = ET.SubElement(fmt_elem, "format")
+                for lang in (self.languages or [self.default_language]):
+                    item = ET.SubElement(nested, "{%s}item" % V8_NS)
+                    ET.SubElement(item, "{%s}lang" % V8_NS).text = lang
+                    ET.SubElement(item, "{%s}content" % V8_NS).text = number_format
 
     def _to_xml_string(self, root: ET.Element) -> str:
         """Convert ElementTree to formatted XML string."""

@@ -372,6 +372,8 @@ class YAMLParser:
         self._element_parser = ElementParser()
         # Compact multilang support (v2.69.0+)
         self.languages: List[str] = self.DEFAULT_LANGUAGES.copy()
+        # Втрати при конвертації макетів (Excel → MXL), v2.78.0+
+        self._template_warnings: List[str] = []
 
     def load_yaml(self) -> bool:
         """
@@ -594,6 +596,9 @@ class YAMLParser:
 
             # v2.42.0+ Process template: property on HTMLDocumentField
             self._process_template_linked_fields(processor)
+
+            # v2.78.0+: втрати конвертації макетів мають дожити до фінального виводу
+            processor.generation_warnings.extend(self._template_warnings)
 
             print(f"✅ YAML успішно розпарсено: {processor.name}")
             return processor
@@ -1376,8 +1381,18 @@ class YAMLParser:
                                     "Install: pip install openpyxl>=3.1.0"
                                 )
                             print(f"      Converting Excel → MXL: {content_path.name}")
-                            mxl_content = convert_excel_to_mxl(str(content_path))
+                            conversion_warnings = []
+                            mxl_content = convert_excel_to_mxl(
+                                str(content_path),
+                                warnings_out=conversion_warnings
+                            )
                             template.content_binary = mxl_content.encode('utf-8')
+                            # v2.78.0+: не мовчати про те, що не перенеслося з Excel
+                            for warning in conversion_warnings:
+                                print(f"      ⚠️ {warning}")
+                            self._template_warnings.extend(
+                                f"{content_path.name}: {w}" for w in conversion_warnings
+                            )
                             print(f"      Converted SpreadsheetDocument: {template_name} ({len(template.content_binary)} bytes)")
                         except ImportError:
                             raise ValueError(
@@ -1688,5 +1703,10 @@ def parse_yaml_config(
             print("⚠️  Проблеми валідації handlers (генерація продовжується):")
             for error in errors:
                 print(f"   - {error}")
+
+        # v2.78.0+: Переносимо в processor, щоб попередження було видно і в кінці
+        # виводу, а не лише тут - інакше воно тоне у логах перед "✨ Готово!"
+        processor.generation_warnings.extend(warnings)
+        processor.generation_warnings.extend(errors)
 
     return processor

@@ -181,10 +181,15 @@ class ProcessorGenerator:
                 user_handlers_parts.append(self.processor.object_module_from_handlers)
             user_handlers = "\n\n".join(user_handlers_parts) if user_handlers_parts else None
 
+            # v2.78.0+: Збираємо попередження про згенеровані TODO-заглушки,
+            # щоб втрата коду друку не залишилась непоміченою
+            bsp_warnings: list = []
             raw_code = generate_bsp_object_module(
                 bsp_config=self.processor.bsp_config,
-                user_handlers=user_handlers
+                user_handlers=user_handlers,
+                warnings_out=bsp_warnings
             )
+            self.processor.generation_warnings.extend(bsp_warnings)
 
             # v2.54.0+: Finalize with watermark (MUST call - returns critical ID data)
             result = finalize_module(

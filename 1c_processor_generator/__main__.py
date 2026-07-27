@@ -722,6 +722,14 @@ def cmd_excel2mxl(args):
         converter.convert(input_path, output_path, args.sheet)
 
         print("✅ MXL успішно створено!")
+
+        # v2.78.0+: те, що не перенеслося, має бути видно одразу
+        if converter.warnings:
+            print()
+            print(f"⚠️  Не перенесено з Excel: {len(converter.warnings)}")
+            for warning in converter.warnings:
+                print(f"   - {warning}")
+
         print()
         print("   Використання в YAML:")
         print("   ```yaml")
@@ -822,10 +830,36 @@ def generate_processor(args, processor):
     # Якщо потрібен EPF формат - компілюємо
     if args.output_format == "epf" and not args.dry_run:
         compile_to_epf(args, processor, processor_root, output_dir, generator)
+        _print_generation_warnings(processor)
     else:
-        print("\n✨ Готово!")
+        warning_count = _print_generation_warnings(processor)
+        if warning_count:
+            print(f"\n✨ Готово (з попередженнями: {warning_count})")
+        else:
+            print("\n✨ Готово!")
 
     return 0
+
+
+def _print_generation_warnings(processor) -> int:
+    """
+    Виводить попередження, зібрані під час парсингу та генерації (v2.78.0+)
+
+    Друкується в самому кінці, щоб втрата коду (напр. TODO-заглушка замість
+    handler'а друку) не залишилась непоміченою за повідомленням про успіх.
+
+    Returns:
+        Кількість попереджень
+    """
+    warnings = getattr(processor, "generation_warnings", None) or []
+    if not warnings:
+        return 0
+
+    print(f"\n⚠️  Згенеровано з попередженнями: {len(warnings)}")
+    for warning in warnings:
+        print(f"   - {warning}")
+
+    return len(warnings)
 
 
 def has_validation_config(processor):

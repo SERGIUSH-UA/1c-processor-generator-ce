@@ -1782,9 +1782,14 @@ class HandlerValidator:
         errors = []
         warnings = []
 
+        # v2.78.0+: Директиви компіляції - поняття модуля форми. Якщо форм немає
+        # (напр. BSP print_form, де код живе в ObjectModule), вимагати директиву
+        # неправильно: у модулі об'єкта вона зробила б код невалідним.
+        require_directive = bool(getattr(self.processor, "forms", None))
+
         for handler_name, handler_code in self._loaded_handlers.items():
             # 1. Перевірка наявності директиви
-            if not self.DIRECTIVE_PATTERN.search(handler_code):
+            if require_directive and not self.DIRECTIVE_PATTERN.search(handler_code):
                 errors.append(
                     f"Handler '{handler_name}' не має директиви компіляції "
                     f"(&НаКлиенте, &НаСервере, тощо). "
@@ -1813,6 +1818,67 @@ class HandlerValidator:
                     f"Handler '{handler_name}' не має закриваючого тегу "
                     f"(КонецПроцедуры/КонецФункции). "
                     f"Додайте закриваючий тег в кінці процедури."
+                )
+
+        return errors, warnings
+
+    @staticmethod
+    def _declares_procedure(code: str, name: str) -> bool:
+        """Чи оголошена в коді процедура/функція з такою назвою (не згадка в коментарі)"""
+        if not code:
+            return False
+        pattern = re.compile(
+            r"(?:^|\n)\s*(?:Процедура|Функция|Procedure|Function)\s+" + re.escape(name) + r"\s*\(",
+            re.IGNORECASE
+        )
+        return bool(pattern.search(code))
+
+    def validate_bsp_print_handlers(self) -> Tuple[List[str], List[str]]:
+        """
+        Перевіряє що для кожної команди друку BSP є код у модулі об'єкта (v2.78.0+)
+
+        Єдиний канал з handlers.bsl у ObjectModule - регіон #Область МодульОбъекта.
+        Процедура, оголошена поза цим регіоном, завантажується, але нікуди не
+        потрапляє: у ObjectModule генерується TODO-заглушка, і обробка друкує
+        порожній документ. Без цієї перевірки втрата коду відбувається мовчки.
+
+        Returns:
+            (errors, warnings)
+        """
+        errors: List[str] = []
+        warnings: List[str] = []
+
+        bsp_config = getattr(self.processor, "bsp_config", None)
+        if not bsp_config or bsp_config.type != "PrintForm":
+            return errors, warnings
+
+        object_module_code = "\n".join(
+            part for part in (
+                getattr(self.processor, "object_module_bsl", None),
+                getattr(self.processor, "object_module_from_handlers", None),
+            ) if part
+        )
+
+        for cmd in bsp_config.commands:
+            handler_name = cmd.handler or f"Печать{cmd.id}"
+
+            if self._declares_procedure(object_module_code, handler_name):
+                continue
+
+            if handler_name in self._loaded_handlers or self._declares_procedure(
+                "\n".join(self._loaded_handlers.values()), handler_name
+            ):
+                warnings.append(
+                    f"Handler '{handler_name}' (команда друку '{cmd.id}') знайдено в handlers.bsl, "
+                    f"але він НЕ потрапить у модуль об'єкта: код друку має бути всередині регіону "
+                    f"#Область МодульОбъекта ... #КонецОбласти. "
+                    f"Зараз замість нього буде згенеровано TODO-заглушку."
+                )
+            else:
+                warnings.append(
+                    f"Для команди друку '{cmd.id}' не знайдено функцію '{handler_name}'. "
+                    f"Додайте її в handlers.bsl всередині регіону #Область МодульОбъекта, "
+                    f"інакше буде згенеровано TODO-заглушку (порожній друк)."
                 )
 
         return errors, warnings
@@ -1884,5 +1950,10 @@ class HandlerValidator:
         fl_errors, fl_warnings = self.validate_form_level_access()
         self.errors.extend(fl_errors)
         self.warnings.extend(fl_warnings)
+
+        # 4. Перевірка handlers друку BSP (v2.78.0+)
+        bsp_errors, bsp_warnings = self.validate_bsp_print_handlers()
+        self.errors.extend(bsp_errors)
+        self.warnings.extend(bsp_warnings)
 
         return len(self.errors) == 0, self.errors, self.warnings

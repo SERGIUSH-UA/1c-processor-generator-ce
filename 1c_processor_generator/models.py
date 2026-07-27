@@ -806,6 +806,10 @@ class Processor:
     # Конфігурація для генерації зовнішніх обробок БСП (печатні форми, заповнення, тощо)
     bsp_config: Optional[BSPConfig] = None
 
+    # Попередження, зібрані під час парсингу/генерації (v2.78.0+)
+    # Виводяться в кінці CLI, щоб мовчазна втрата коду не ховалась за "✨ Готово!"
+    generation_warnings: List[str] = field(default_factory=list)
+
     def __post_init__(self):
         if not self.synonym_ru:
             self.synonym_ru = self.name

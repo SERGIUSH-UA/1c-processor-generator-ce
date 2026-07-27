@@ -7,6 +7,69 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.78.0] - 2026-07-27
+
+### Fixed
+- **Silent loss of BSP print form handlers** (critical) - a print handler written outside the
+  `#Область МодульОбъекта` region was loaded, reported as loaded, then dropped. The generated
+  `ObjectModule.bsl` kept its TODO stub, the CLI printed `✨ Готово!` and exited 0 — the .epf
+  compiled, opened and registered the print command in 1C, but printed an empty document.
+  - The generator now reports every command whose handler ended up as a stub, and says
+    explicitly when the code exists in `handlers.bsl` but sits outside the required region
+  - New `Processor.generation_warnings` channel surfaces warnings at the very end of the run,
+    after the success banner, for both XML and EPF output
+  - Final line becomes `✨ Готово (з попередженнями: N)`; exit code stays 0
+- **BSP handler detection was substring-based** - `ПечатьСчет` counted as implemented when only
+  `ПечатьСчетФактура` existed, and a mere mention in a comment suppressed stub generation.
+  Detection now matches an actual `Процедура`/`Функция` declaration
+- **`handler:` on BSP commands was ignored** - documented since v2.57.0 but never read;
+  the handler name was always hardcoded to `Печать{id}`
+- **Compilation directives wrongly required in ObjectModule** - `HandlerValidator` demanded
+  `&НаСервере`/`&НаКлиенте` from every loaded procedure, including print form handlers where
+  such a directive would make the code invalid. The check now applies only when the processor
+  has forms
+- **`⚠️ Не знайдено процедур`** no longer fires when all code legitimately lives inside
+  `#Область МодульОбъекта`
+- **Cloud template payload** - `templates[].file` and `automation` keys are now normalized to
+  POSIX paths (previously only `assets` were); a binary file carrying a text extension raises a
+  clear error with a fix recipe instead of an unhandled `UnicodeDecodeError`
+- **Cloud 400 diagnostics** - server errors are read from `error`, `detail`, `message` or
+  `errors[]`; previously only `error` was inspected and everything else degraded to a bare
+  `HTTP Error 400: Bad Request`
+
+### Added
+- **Excel → MXL: full cell formatting** - the converter previously kept only fonts, alignment
+  and border presence, discarding the rest without a word:
+  - Background colors, font colors and border colors (`backColor`, `textColor`, `borderColor`)
+  - Border styles and widths per side — `thin/medium/thick/double/dotted/dashed/...` now map to
+    distinct MXL line definitions instead of collapsing into one default solid line
+  - Number formats — numeric (`ЧЦ`/`ЧДЦ`/`ЧРГ`) and date (`ДФ`) formats, emitted as localized
+    nested `<format>` elements
+  - Text indent
+  - Excel theme colors are resolved against the standard Office palette (with tint), not dropped
+- **Excel → MXL: images and logos** - embedded pictures are transferred as anchored `<drawing>`
+  elements plus a `<picture>` registry, keeping their cell anchors.
+  Note: `<pictureIndex>` is a **1-based** reference into the 0-based registry — 1C reads
+  `<pictureIndex>0</pictureIndex>` as "no picture" and silently drops the image data
+- **Lossy-conversion warnings** - the converter reports what it could not carry over (charts,
+  unreadable images, number formats with no 1C equivalent), both in `excel2mxl` and during
+  generation. Previously a lost logo simply disappeared
+- **Tests for previously uncovered areas** - `tests/test_bsp_print_form.py` (print form routing
+  had zero coverage) and `tests/test_excel_to_mxl.py` (the converter had zero coverage), plus
+  `.mxl`/`.xlsx` and path-normalization cases in `tests/test_cloud_compiler.py`
+
+### Changed
+- **BSP print form documentation rewritten** - `docs/LLM_BSP_PRINT_FORMS.md` showed handlers as
+  a bare body with the name in a comment and a `ТабличныйДокумент` parameter. The real contract
+  is a full `Функция Печать{id}(МассивОбъектов, ОбъектыПечати)` that creates and returns the
+  document, wrapped in `#Область МодульОбъекта`, without compilation directives. The required
+  region was not mentioned anywhere in the guide
+- **Word/ActiveDocument output documented as unsupported** - the generated `Печать()` always
+  routes through `ВывестиТабличныйДокументВКоллекцию`, so `ОфисныеДокументы` was never reachable
+- **Examples fixed** - `examples/yaml/bsp_print_form_excel/handlers.bsl` was written in the
+  documented-but-wrong style and always produced an empty print form;
+  `examples/yaml/bsp_print_form/` had no `handlers.bsl` at all
+
 ## [2.77.0] - 2026-04-16
 
 ### Added

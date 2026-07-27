@@ -59,19 +59,52 @@ Use `{ParameterName}` syntax in cells. They become MXL parameters filled at runt
 | Font size | ✅ | ✅ | Points |
 | Bold | ✅ | ✅ | |
 | Italic | ✅ | ✅ | |
+| Underline / strikeout | ✅ | ✅ | |
 | Alignment (H) | ✅ | ✅ | Left, Center, Right |
 | Alignment (V) | ✅ | ✅ | Top, Center, Bottom |
-| Borders | ✅ | ✅ | Left, Right, Top, Bottom |
+| Indent | ✅ | ✅ | v2.78.0+ |
+| Borders | ✅ | ✅ | Per side, with style and width (v2.78.0+) |
+| Border color | ✅ | ✅ | v2.78.0+ — MXL keeps one color per cell |
+| Background color | ✅ | ✅ | v2.78.0+ |
+| Font color | ✅ | ✅ | v2.78.0+ — black is omitted (1C default) |
+| Number formats | ✅ | ✅ | v2.78.0+ — numeric and date formats |
+| Images / logos | ✅ | ✅ | v2.78.0+ — anchored to cells |
 | Column width | ✅ | ✅ | Converted to 1C units |
 | Row height | ✅ | ✅ | Non-default heights |
 | Merged cells | ✅ | ✅ | |
 | Text wrap | ✅ | ✅ | |
 
-**Not yet supported:**
-- Background colors
-- Font colors
-- Images/logos
-- Number formats (coming soon)
+**Border style mapping** (Excel → MXL):
+
+| Excel | MXL style | Width |
+|-------|-----------|-------|
+| thin | Solid | 1 |
+| medium | Solid | 2 |
+| thick | Solid | 3 |
+| double | Double | 1 |
+| hair, dotted | Dotted | 1 |
+| dashed, dashDot, slantDashDot | Dashed | 1 |
+| dashDotDot | ThinDashed | 1 |
+
+**Number format mapping:**
+
+| Excel | 1C |
+|-------|-----|
+| `0.00` | `ЧЦ=15; ЧДЦ=2` |
+| `#,##0.00` | `ЧЦ=15; ЧДЦ=2; ЧРГ=' '` |
+| `dd.mm.yyyy` | `ДФ=dd.MM.yyyy` |
+
+**Still not carried over** — the CLI now reports each of these explicitly instead of
+dropping them silently:
+
+- Percentage and scientific formats (no direct 1C format string)
+- Conditional formats (`positive;negative;zero` sections — only the first is used)
+- Charts (add them as images instead)
+- Formulas — `data_only=True` means the cached *value* is converted, not the formula
+
+> **Theme colors:** Excel stores many colors as a theme index plus a tint rather than RGB.
+> These are resolved against the standard Office palette, so a workbook using a custom
+> theme may come out slightly off-shade.
 
 ---
 

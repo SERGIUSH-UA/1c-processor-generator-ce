@@ -53,8 +53,10 @@ except (ImportError, ValueError):
 
 logger = logging.getLogger(__name__)
 
-# Binary file extensions that should be base64-encoded
-BINARY_EXTENSIONS = {'.mxl', '.xlsx', '.xls', '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.ico'}
+# Binary file extensions that should be base64-encoded.
+# Must stay in sync with BINARY_EXTENSIONS on the server (generator-api/app/api/routes.py):
+# a file the server treats as binary but we send as text is rejected as invalid base64.
+BINARY_EXTENSIONS = {'.mxl', '.xlsx', '.xls', '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.ico', '.svg'}
 
 
 class CloudCompileError(Exception):
@@ -254,15 +256,77 @@ class CloudCompiler:
 
             return False, messages, errors
 
+    @staticmethod
+    def _extract_error_message(error_body) -> Optional[str]:
+        """
+        Витягує повідомлення про помилку з тіла відповіді сервера (v2.78.0+)
+
+        Раніше читалось лише поле 'error', тому відповідь у форматі
+        {"errors": [...]} чи {"detail": ...} перетворювалась на голе
+        "HTTP Error 400: Bad Request" без жодної діагностики.
+        """
+        if not isinstance(error_body, dict):
+            return None
+
+        for key in ("error", "detail", "message"):
+            value = error_body.get(key)
+            if isinstance(value, str) and value.strip():
+                return value
+
+        errors = error_body.get("errors")
+        if isinstance(errors, list) and errors:
+            parts = []
+            for item in errors:
+                if isinstance(item, str):
+                    parts.append(item)
+                elif isinstance(item, dict):
+                    parts.append(str(item.get("message") or item))
+            if parts:
+                return "; ".join(parts)
+        elif isinstance(errors, str) and errors.strip():
+            return errors
+
+        return None
+
+    @staticmethod
+    def _encode_file(file_path: Path) -> str:
+        """
+        Кодує файл для payload: бінарні - як чистий base64, текстові - як UTF-8 текст.
+
+        Бінарність визначається розширенням і має збігатися з BINARY_EXTENSIONS
+        на сервері. Якщо файл із "текстовим" розширенням насправді бінарний,
+        read_text() раніше кидав UnicodeDecodeError прямо з compile(); тепер
+        це зрозуміла помилка з рецептом, а не трейсбек (v2.78.0+).
+        """
+        if file_path.suffix.lower() in BINARY_EXTENSIONS:
+            return base64.b64encode(file_path.read_bytes()).decode("ascii")
+
+        try:
+            return file_path.read_text(encoding="utf-8")
+        except UnicodeDecodeError as e:
+            raise CloudCompileError(
+                f"Файл '{file_path.name}' не є валідним UTF-8, але його розширення "
+                f"({file_path.suffix or 'без розширення'}) не вважається бінарним. "
+                f"Кодувати його як base64 наосліп не можна: сервер визначає бінарність "
+                f"за тим самим списком розширень і прийняв би base64 за текст. "
+                f"Додайте розширення в BINARY_EXTENSIONS - і в клієнті, і на сервері."
+            ) from e
+
+    @staticmethod
+    def _payload_key(path_str: str) -> str:
+        """Ключ payload - завжди POSIX-шлях (сервер не знає про Windows-слеші)."""
+        return str(path_str).replace("\\", "/")
+
     def _collect_template_files(self, config_path: Path, yaml_content: str) -> Dict[str, str]:
         """
         Collect template files referenced in YAML config.
 
         Reads the YAML to find templates section and loads referenced files.
-        Binary files are base64-encoded with 'base64:' prefix.
+        Binary files are base64-encoded (bare base64, no prefix — that is what
+        the API contract expects and what the server decodes).
 
         Returns:
-            Dict mapping relative path -> file content (or base64: prefixed for binary).
+            Dict mapping relative path -> file content (base64 string for binary).
         """
         template_files = {}
 
@@ -297,13 +361,7 @@ class CloudCompiler:
                 logger.warning(f"Template file not found: {file_path}")
                 continue
 
-            # Check if binary
-            ext = file_path.suffix.lower()
-            if ext in BINARY_EXTENSIONS:
-                content = base64.b64encode(file_path.read_bytes()).decode("ascii")
-                template_files[file_path_str] = f"base64:{content}"
-            else:
-                template_files[file_path_str] = file_path.read_text(encoding="utf-8")
+            template_files[self._payload_key(file_path_str)] = self._encode_file(file_path)
 
             # Also check for automation file
             automation_path = tmpl.get("automation")
@@ -312,7 +370,7 @@ class CloudCompiler:
                 if not auto_file.is_absolute():
                     auto_file = config_dir / automation_path
                 if auto_file.exists():
-                    template_files[automation_path] = auto_file.read_text(encoding="utf-8")
+                    template_files[self._payload_key(automation_path)] = self._encode_file(auto_file)
 
             # Check for assets directory
             assets_dir = tmpl.get("assets")
@@ -323,13 +381,8 @@ class CloudCompiler:
                 if assets_path.exists() and assets_path.is_dir():
                     for asset_file in assets_path.rglob("*"):
                         if asset_file.is_file():
-                            rel_path = str(asset_file.relative_to(config_dir)).replace("\\", "/")
-                            ext = asset_file.suffix.lower()
-                            if ext in BINARY_EXTENSIONS:
-                                content = base64.b64encode(asset_file.read_bytes()).decode("ascii")
-                                template_files[rel_path] = f"base64:{content}"
-                            else:
-                                template_files[rel_path] = asset_file.read_text(encoding="utf-8")
+                            rel_path = self._payload_key(asset_file.relative_to(config_dir))
+                            template_files[rel_path] = self._encode_file(asset_file)
 
         return template_files
 
@@ -415,7 +468,7 @@ class CloudCompiler:
                     # Client errors - don't retry
                     try:
                         error_body = json.loads(e.read().decode("utf-8"))
-                        error_msg = error_body.get("error", str(e))
+                        error_msg = self._extract_error_message(error_body) or str(e)
                     except Exception:
                         error_msg = str(e)
                     raise CloudCompileError(error_msg)

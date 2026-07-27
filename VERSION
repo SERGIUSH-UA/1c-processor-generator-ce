@@ -13,5 +13,5 @@
 #   python scripts/update_version.py --release 2.57.0 # Update RELEASE version
 #   python scripts/update_version.py --promote        # Copy DEV -> RELEASE
 
-DEV_VERSION=2.77.0
-RELEASE_VERSION=2.77.0
+DEV_VERSION=2.78.0
+RELEASE_VERSION=2.78.0

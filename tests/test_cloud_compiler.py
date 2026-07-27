@@ -150,18 +150,18 @@ class TestTemplateFileCollection:
         assert files["templates/card.html"] == "<html>test</html>"
 
     def test_collect_binary_template_as_base64(self, cloud_compiler, temp_project_with_templates):
-        """Binary templates should be base64-encoded with prefix."""
+        """Binary templates should be bare base64 — no prefix, as the API contract expects."""
         tmp_path, config, _ = temp_project_with_templates
         yaml_content = config.read_text(encoding="utf-8")
 
         files = cloud_compiler._collect_template_files(config, yaml_content)
 
         assert "templates/logo.png" in files
-        assert files["templates/logo.png"].startswith("base64:")
+        b64_data = files["templates/logo.png"]
+        assert not b64_data.startswith("base64:")
 
-        # Verify it decodes correctly
-        b64_data = files["templates/logo.png"][len("base64:"):]
-        decoded = base64.b64decode(b64_data)
+        # Server decodes with validate=True — any non-alphabet char (like ':') would be rejected
+        decoded = base64.b64decode(b64_data, validate=True)
         assert decoded == b"\x89PNG\r\n\x1a\nfake_png_data"
 
     def test_no_templates_returns_empty(self, cloud_compiler, temp_project):
@@ -187,6 +187,102 @@ class TestTemplateFileCollection:
 
         files = cloud_compiler._collect_template_files(config, yaml_content)
         assert "nonexistent.html" not in files
+
+    @pytest.mark.parametrize("filename,payload", [
+        ("invoice.mxl", b"\xef\xbb\xbf<?xml version=\"1.0\"?><document/>"),
+        ("invoice.xlsx", b"PK\x03\x04fake_xlsx_zip_bytes"),
+    ])
+    def test_spreadsheet_templates_are_base64(self, cloud_compiler, tmp_path, filename, payload):
+        """
+        The reported bug was hit by .mxl/.xlsx specifically - both must be sent
+        as bare base64 the server can decode with validate=True.
+        """
+        templates_dir = tmp_path / "templates"
+        templates_dir.mkdir()
+        (templates_dir / filename).write_bytes(payload)
+
+        config = tmp_path / "config.yaml"
+        config.write_text(
+            "name: Test\n"
+            "templates:\n"
+            "  - name: Invoice\n"
+            "    type: SpreadsheetDocument\n"
+            f"    file: templates/{filename}\n",
+            encoding="utf-8",
+        )
+
+        files = cloud_compiler._collect_template_files(config, config.read_text(encoding="utf-8"))
+
+        key = f"templates/{filename}"
+        assert key in files
+        assert base64.b64decode(files[key], validate=True) == payload
+
+    def test_windows_path_separators_normalized(self, cloud_compiler, tmp_path):
+        """
+        Keys must be POSIX paths. A YAML written on Windows may use backslashes,
+        and the server would not match them against the paths inside the config.
+        """
+        templates_dir = tmp_path / "templates"
+        templates_dir.mkdir()
+        (templates_dir / "card.html").write_text("<html>test</html>", encoding="utf-8")
+
+        config = tmp_path / "config.yaml"
+        config.write_text(
+            "name: Test\n"
+            "templates:\n"
+            "  - name: Card\n"
+            "    type: HTMLDocument\n"
+            "    file: templates\\card.html\n",
+            encoding="utf-8",
+        )
+
+        files = cloud_compiler._collect_template_files(config, config.read_text(encoding="utf-8"))
+
+        assert "templates/card.html" in files
+        assert "templates\\card.html" not in files
+
+    def test_binary_content_with_text_extension_raises(self, cloud_compiler, tmp_path):
+        """
+        Sending undecodable bytes as text would silently break on the server,
+        so it must fail loudly here with a fix recipe (not a UnicodeDecodeError).
+        """
+        from importlib import import_module
+        mod = import_module('1c_processor_generator.pro.cloud_compiler')
+
+        templates_dir = tmp_path / "templates"
+        templates_dir.mkdir()
+        (templates_dir / "card.html").write_bytes(b"\xff\xfe\x00binary\x00")
+
+        config = tmp_path / "config.yaml"
+        config.write_text(
+            "name: Test\n"
+            "templates:\n"
+            "  - name: Card\n"
+            "    type: HTMLDocument\n"
+            "    file: templates/card.html\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(mod.CloudCompileError, match="BINARY_EXTENSIONS"):
+            cloud_compiler._collect_template_files(config, config.read_text(encoding="utf-8"))
+
+
+class TestErrorMessageExtraction:
+    """Server 400 bodies come in several shapes - none should degrade to a bare HTTP error."""
+
+    @pytest.mark.parametrize("body,expected", [
+        ({"error": "Invalid base64 content"}, "Invalid base64 content"),
+        ({"detail": "Validation failed"}, "Validation failed"),
+        ({"message": "Bad request"}, "Bad request"),
+        ({"errors": ["first", "second"]}, "first; second"),
+        ({"errors": [{"message": "structured"}]}, "structured"),
+    ])
+    def test_extracts_message(self, cloud_compiler, body, expected):
+        assert cloud_compiler._extract_error_message(body) == expected
+
+    def test_unknown_shape_returns_none(self, cloud_compiler):
+        assert cloud_compiler._extract_error_message({"unexpected": "shape"}) is None
+        assert cloud_compiler._extract_error_message("not a dict") is None
 
 
 class TestHealthCheck:

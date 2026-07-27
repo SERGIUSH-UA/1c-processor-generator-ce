@@ -12,6 +12,7 @@ This module is compiled to .pyd in release builds.
 v2.57.0+
 """
 
+import re
 from typing import List, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -159,7 +160,7 @@ BSP_PRINT_PROCEDURE_TEMPLATE = '''// Обработчик печати.
 
 # Шаблон обробника однієї печатної форми
 BSP_PRINT_HANDLER_TEMPLATE = '''	Если УправлениеПечатью.НужноПечататьМакет(КоллекцияПечатныхФорм, "{cmd_id}") Тогда
-		ПечатныйДокумент = Печать{cmd_id}(МассивОбъектов, ОбъектыПечати);
+		ПечатныйДокумент = {handler_name}(МассивОбъектов, ОбъектыПечати);
 		УправлениеПечатью.ВывестиТабличныйДокументВКоллекцию(
 			КоллекцияПечатныхФорм,
 			"{cmd_id}",
@@ -179,7 +180,7 @@ BSP_PRINT_STUB_TEMPLATE = '''// Формирование печатной фор
 // Возвращаемое значение:
 //   ТабличныйДокумент - сформированный документ для печати.
 //
-Функция Печать{cmd_id}(МассивОбъектов, ОбъектыПечати)
+Функция {handler_name}(МассивОбъектов, ОбъектыПечати)
 
 	ТабличныйДокумент = Новый ТабличныйДокумент;
 	ТабличныйДокумент.КлючПараметровПечати = "ПАРАМЕТРЫ_ПЕЧАТИ_{cmd_id}";
@@ -232,6 +233,27 @@ class BSPGenerator:
         """
         self.config = bsp_config
         self.user_handlers = user_handlers or ""
+        # Команди, для яких довелося підставити TODO-заглушку (v2.78.0+)
+        self.stubbed_commands: List[tuple] = []  # [(cmd_id, handler_name), ...]
+
+    @staticmethod
+    def _handler_name(cmd: "BSPCommand") -> str:
+        """Ім'я функції друку: кастомне з handler: або Печать{id} за замовчуванням."""
+        return cmd.handler or f"Печать{cmd.id}"
+
+    @staticmethod
+    def _has_procedure(code: str, name: str) -> bool:
+        """
+        Перевіряє чи в коді реально оголошена процедура/функція з такою назвою.
+
+        Substring-пошук тут хибний у два боки: назва може згадуватись у коментарі,
+        а 'ПечатьСчет' знайдеться всередині 'ПечатьСчетФактура'.
+        """
+        pattern = re.compile(
+            r"(?:^|\n)\s*(?:Процедура|Функция|Procedure|Function)\s+" + re.escape(name) + r"\s*\(",
+            re.IGNORECASE
+        )
+        return bool(pattern.search(code))
 
     def generate(self) -> str:
         """
@@ -330,6 +352,7 @@ class BSPGenerator:
         for cmd in self.config.commands:
             handler = BSP_PRINT_HANDLER_TEMPLATE.format(
                 cmd_id=cmd.id,
+                handler_name=self._handler_name(cmd),
                 title_ru=cmd.title_ru,
                 title_uk=cmd.title_uk or cmd.title_ru,
                 title_en=cmd.title_en or cmd.title_ru,
@@ -343,19 +366,22 @@ class BSPGenerator:
     def _combine_handlers(self) -> str:
         """Combine user handlers with generated stubs."""
         parts = []
+        self.stubbed_commands = []
 
         # Generate stubs for print functions (if not provided by user)
         if self.config.type == "PrintForm":
             for cmd in self.config.commands:
-                handler_name = f"Печать{cmd.id}"
+                handler_name = self._handler_name(cmd)
 
                 # Check if user provided this handler
-                if handler_name not in self.user_handlers:
+                if not self._has_procedure(self.user_handlers, handler_name):
                     stub = BSP_PRINT_STUB_TEMPLATE.format(
                         cmd_id=cmd.id,
+                        handler_name=handler_name,
                         template_name=cmd.template_name or f"ПФ_MXL_{cmd.id}",
                     )
                     parts.append(stub)
+                    self.stubbed_commands.append((cmd.id, handler_name))
 
         # Add user handlers
         if self.user_handlers:
@@ -380,7 +406,8 @@ def get_bsp_usage_mapping() -> dict:
 
 def generate_bsp_object_module(
     bsp_config: "BSPConfig",
-    user_handlers: Optional[str] = None
+    user_handlers: Optional[str] = None,
+    warnings_out: Optional[List[str]] = None
 ) -> str:
     """
     Generate BSP-compatible ObjectModule code.
@@ -388,9 +415,20 @@ def generate_bsp_object_module(
     Args:
         bsp_config: BSP configuration
         user_handlers: Optional user-provided handler code
+        warnings_out: Optional list to collect warnings about generated TODO stubs
 
     Returns:
         str: BSL code for ObjectModule.bsl
     """
     generator = BSPGenerator(bsp_config, user_handlers)
-    return generator.generate()
+    code = generator.generate()
+
+    if warnings_out is not None:
+        for cmd_id, handler_name in generator.stubbed_commands:
+            warnings_out.append(
+                f"Команда друку '{cmd_id}': у ObjectModule згенеровано TODO-заглушку "
+                f"'{handler_name}' — код формування друкованої форми відсутній, "
+                f"обробка надрукує порожній документ"
+            )
+
+    return code
