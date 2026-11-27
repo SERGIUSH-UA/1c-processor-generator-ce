@@ -414,8 +414,9 @@ class ProcessorGenerator:
 КонецПроцедуры"""
                 command_handlers.append(cmd_handler)
 
-        # Складаємо повний модуль
-        handlers_code = "\n\n".join(handlers) if handlers else "// Обработчики событий формы"
+        # Shared event bindings stay in Form.xml. Emit each identical BSL
+        # implementation once per form, including any paired server procedure.
+        handlers_code = "\n\n".join(dict.fromkeys(handlers)) if handlers else "// Обработчики событий формы"
         commands_code = "\n\n".join(command_handlers) if command_handlers else "// Обработчики команд формы"
 
         # Хелпери (допоміжні процедури/функції, що не є обробниками подій)
